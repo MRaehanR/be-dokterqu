@@ -14,9 +14,9 @@ class ModifiedUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->integer('role_id')->after('remember_token');
+            $table->integer('role_id')->after('remember_token')->nullable();
             $table->string('photo')->after('role_id')->nullable();
-            $table->string('phone')->after('photo');
+            $table->string('phone')->after('photo')->nullable();
         });
     }
 
