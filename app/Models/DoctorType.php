@@ -10,5 +10,7 @@ class DoctorType extends Model
     use HasFactory;
 
     protected $table = 'doctor_type';
-    protected $fillable = 'name';
+    protected $fillable = [
+        'name',
+    ];
 }
