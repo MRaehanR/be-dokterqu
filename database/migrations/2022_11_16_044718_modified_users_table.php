@@ -14,9 +14,8 @@ class ModifiedUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->integer('role_id')->after('remember_token')->nullable();
-            $table->string('photo')->after('role_id')->nullable();
-            $table->string('phone')->after('photo')->nullable();
+            $table->string('photo')->after('remember_token')->nullable();
+            $table->string('phone')->after('photo');
         });
     }
 
@@ -28,7 +27,6 @@ class ModifiedUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('role_id');
             $table->dropColumn('photo');
             $table->dropColumn('phone');
         });
