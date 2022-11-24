@@ -13,7 +13,7 @@ class ApotekInfo extends Model
     protected $fillable = [
         'user_id',
         'name',
-        'assress',
+        'address',
         'ktp',
         'npwp',
         'surat_izin_usaha',

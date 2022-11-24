@@ -21,4 +21,9 @@ class DoctorInfo extends Model
         'str',
         'ktp',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
