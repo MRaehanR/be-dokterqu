@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ApotekInfo;
 use App\Models\DoctorInfo;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -129,6 +130,7 @@ class AuthController extends Controller
                         'ktp' => $this->storeImage($request->file('ktp'), 'ktp'),
                     ]);
                     $user->assignRole('doctor');
+                    event(new Registered($user));
 
                     return response()->json([
                         'status' => true,
@@ -177,6 +179,7 @@ class AuthController extends Controller
                         'longitude' => $request->longitude,
                     ]);
                     $user->assignRole('apotek_owner');
+                    event(new Registered($user));
 
                     return response()->json([
                         'status' => true,
@@ -192,6 +195,8 @@ class AuthController extends Controller
                 case 3:
                     $user->save();
                     $user->assignRole('customer');
+
+                    event(new Registered($user));
 
                     return response()->json([
                         'status' => true,
