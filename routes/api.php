@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\EmailVerificationController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,8 +25,13 @@ Route::prefix('auth')->group(function() {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
 
+    Route::prefix('password')->group(function() {
+        Route::post('/forgot', [ForgotPasswordController::class, 'forgot']);
+        Route::post('/reset', [ForgotPasswordController::class, 'reset'])->name('password.reset');
+    });
+
     Route::middleware('auth:sanctum')->prefix('email')->group(function() {
         Route::post('/verification-notification', [EmailVerificationController::class, 'sendVerificationEmail']);
-        Route::get('/verify-email/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
+        Route::get('/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
     });
 });
