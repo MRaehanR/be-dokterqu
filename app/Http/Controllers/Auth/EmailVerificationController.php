@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class EmailVerificationController extends Controller
@@ -27,6 +28,7 @@ class EmailVerificationController extends Controller
                 'message' => 'Verification link sent',
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {
+            Log::error($th->getMessage());
             return response()->json([
                 'status' => false,
                 'message' => $th->getMessage()
@@ -53,6 +55,7 @@ class EmailVerificationController extends Controller
                 'message' => 'Email has been verified',
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {
+            Log::error($th->getMessage());
             return response()->json([
                 'status' => false,
                 'message' => $th->getMessage()

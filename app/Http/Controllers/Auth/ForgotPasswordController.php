@@ -8,6 +8,7 @@ use App\Models\ResetCodePassword;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
@@ -52,6 +53,7 @@ class ForgotPasswordController extends Controller
                 "message" => "Reset password code sent on your email.",
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {
+            Log::error($th->getMessage());
             return response()->json([
                 'status' => false,
                 'message' => $th->getMessage()
@@ -88,6 +90,7 @@ class ForgotPasswordController extends Controller
                 "data" => $resetCode,
             ], Response::HTTP_ACCEPTED);
         } catch (\Throwable $th) {
+            Log::error($th->getMessage());
             return response()->json([
                 'status' => false,
                 'message' => $th->getMessage()
@@ -131,6 +134,7 @@ class ForgotPasswordController extends Controller
                 "message" => "Password has been successfully changed",
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {
+            Log::error($th->getMessage());
             return response()->json([
                 'status' => false,
                 'message' => $th->getMessage()
