@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
@@ -54,6 +55,7 @@ class AuthController extends Controller
                 'data' => $user,
             ], Response::HTTP_CREATED);
         } catch (\Throwable $th) {
+            Log::error($th->getMessage());
             return response()->json([
                 'status' => false,
                 'message' => $th->getMessage()
@@ -206,6 +208,7 @@ class AuthController extends Controller
                     break;
             }
         } catch (\Throwable $th) {
+            Log::error($th->getMessage());
             return response()->json([
                 'status' => false,
                 'message' => $th->getMessage()
