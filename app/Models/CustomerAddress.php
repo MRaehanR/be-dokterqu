@@ -19,4 +19,16 @@ class CustomerAddress extends Model
         'latitude',
         'longitude',
     ];
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONSHIP
+    |--------------------------------------------------------------------------
+    */
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

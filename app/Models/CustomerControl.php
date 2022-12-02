@@ -16,4 +16,15 @@ class CustomerControl extends Model
         'next_date',
         'end_date',
     ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONSHIP
+    |--------------------------------------------------------------------------
+    */
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

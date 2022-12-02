@@ -46,13 +46,18 @@ class AuthController extends Controller
 
             $user = User::where('email', $request->email)->first();
             $token = $user->createToken("API ACCESS TOKEN")->plainTextToken;
-            $user->role = $user->getRoleNames()->first();
-            $user->token = $token;
 
             return response()->json([
                 'status' => true,
                 'message' => 'User Logged In Successfully',
-                'data' => $user,
+                'data' => [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'email_verified' => $user->email_verified,
+                    'photo' => $user->photo_profile,
+                    'role' => $user->roles->first()->name,
+                    'token' => $token,
+                ],
             ], Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
@@ -71,7 +76,7 @@ class AuthController extends Controller
                 [
                     'name' => 'required|min:5',
                     'email' => 'required|email|unique:users',
-                    'password' => 'required',
+                    'password' => 'required|confirmed',
                     'photo' => 'mimes:jpg,png,jpeg,bmp|max:2048',
                     'phone' => 'required|unique:users',
                     'role' => 'required',
@@ -87,9 +92,9 @@ class AuthController extends Controller
             }
 
             $user = new User([
-                'name' => ucwords(strtolower($request->name)),
+                'name' => $request->name,
                 'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'password' => $request->password,
                 'photo' => $this->storeImage($request->file('photo'), 'photo_profile'),
                 'phone' => $request->phone,
             ]);
@@ -120,13 +125,13 @@ class AuthController extends Controller
                     }
 
                     $user->save();
-                    $doctorInfo = new DoctorInfo([
+                    $doctorInfo = DoctorInfo::create([
                         'user_id' => $user->id,
                         'type_doctor_id' => $request->type_doctor_id,
                         'experience' => $request->experience,
-                        'alumnus' => ucwords(strtolower($request->alumnus)),
+                        'alumnus' => $request->alumnus,
                         'alumnus_tahun' => $request->alumnus_tahun,
-                        'tempat_praktik' => ucwords(strtolower($request->tempat_praktik)),
+                        'tempat_praktik' => $request->tempat_praktik,
                         'cv' => $this->storeImage($request->file('cv'), 'cv'),
                         'str' => $this->storeImage($request->file('str'), 'str'),
                         'ktp' => $this->storeImage($request->file('ktp'), 'ktp'),
@@ -171,7 +176,7 @@ class AuthController extends Controller
                     $user->save();
                     $apotekInfo = ApotekInfo::create([
                         'user_id' => $user->id,
-                        'name' => ucwords(strtolower($request->name)),
+                        'name' => $request->name,
                         'address' => $request->address,
                         'ktp' => $this->storeImage($request->file('ktp'), 'ktp'),
                         'npwp' => $this->storeImage($request->file('npwp'), 'npwp'),

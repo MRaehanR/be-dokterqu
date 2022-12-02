@@ -22,8 +22,32 @@ class DoctorInfo extends Model
         'ktp',
     ];
 
+    
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONSHIPS
+    |--------------------------------------------------------------------------
+    */
+
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    
+    /*
+    |--------------------------------------------------------------------------
+    | MUTATORS
+    |--------------------------------------------------------------------------
+    */
+
+    public function setAlumnusAttribute($value)
+    {
+        $this->attributes['alumnus'] = ucwords(strtolower($value));
+    }
+
+    public function setTempatPraktikAttribute($value)
+    {
+        $this->attributes['tempat_praktik'] = ucwords(strtolower($value));
     }
 }
