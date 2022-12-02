@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -48,8 +49,63 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONSHIPS
+    |--------------------------------------------------------------------------
+    */
+
     public function doctorInfo()
     {
         return $this->hasOne(DoctorInfo::class, 'user_id');
+    }
+
+    public function apotekInfo()
+    {
+        return $this->hasOne(ApotekInfo::class, 'user_id');
+    }
+
+    public function customerInfo()
+    {
+        return $this->hasOne(CustomerInfo::class, 'user_id');
+    }
+
+    public function customerAddress()
+    {
+        return $this->hasMany(CustomerAddress::class, 'user_id');
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACCESSORS
+    |--------------------------------------------------------------------------
+    */
+
+    public function getPhotoProfileAttribute()
+    {
+        return (isset($this->photo)) ? env('APP_URL') . '/' . $this->photo : null;
+    }
+
+    public function getEmailVerifiedAttribute()
+    {
+        return isset($this->email_verified_at);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | MUTATORS
+    |--------------------------------------------------------------------------
+    */
+
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = ucwords(strtolower($value));
+    }
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::make($value);
     }
 }

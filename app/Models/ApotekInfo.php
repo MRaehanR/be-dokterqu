@@ -21,4 +21,28 @@ class ApotekInfo extends Model
         'latitude',
         'longitude',
     ];
+
+    
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONSHIP
+    |--------------------------------------------------------------------------
+    */
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    
+    /*
+    |--------------------------------------------------------------------------
+    | MUTATORS
+    |--------------------------------------------------------------------------
+    */
+
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = ucwords(strtolower($value));
+    }
 }

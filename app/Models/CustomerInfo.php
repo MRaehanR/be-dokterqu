@@ -15,4 +15,16 @@ class CustomerInfo extends Model
         'address_id',
         'control_id',
     ];
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONSHIPS
+    |--------------------------------------------------------------------------
+    */
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
