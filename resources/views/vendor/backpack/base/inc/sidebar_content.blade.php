@@ -9,6 +9,7 @@
         <li class="nav-item"><a class="nav-link" href="{{ backpack_url('user') }}"><i class="nav-icon la la-user"></i> Users</a></li>
         <li class="nav-item"><a class="nav-link" href="{{ backpack_url('role') }}"><i class="nav-icon la la-id-badge"></i> <span>Roles</span></a></li>
         <li class="nav-item"><a class="nav-link" href="{{ backpack_url('permission') }}"><i class="nav-icon la la-key"></i> <span>Permissions</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ backpack_url('doctor-verification') }}"><i class="nav-icon la la-user-nurse"></i> <span>Doctor Verifications</span></a></li>
     </ul>
 </li>
 @endif

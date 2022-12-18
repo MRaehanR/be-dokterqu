@@ -3,8 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\UserRequest;
+use App\Models\DoctorInfo;
+use App\Models\User;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class UserCrudController
@@ -170,5 +175,34 @@ class UserCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+
+    public function getAllDoctors(Request $request)
+    {
+        try {
+            $doctors = DoctorInfo::with('user');
+            if (isset($request->status)) {
+                if ($request->status == 'open') {
+                    $doctors = $doctors->status('open');
+                } else if ($request->status == 'accepted') {
+                    $doctors = $doctors->status('accepted');
+                } else if ($request->status == 'rejected') {
+                    $doctors = $doctors->status('rejected');
+                }
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Get doctors success',
+                'data' => $doctors->get(),
+            ], Response::HTTP_CREATED);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

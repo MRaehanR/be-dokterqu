@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\DoctorVerificationCrudController;
+use App\Http\Controllers\Admin\UserCrudController;
 use Illuminate\Support\Facades\Route;
 
 // --------------------------
@@ -17,4 +19,8 @@ Route::group([
     'namespace'  => 'App\Http\Controllers\Admin',
 ], function () { // custom admin routes
     Route::crud('user', 'UserCrudController');
+
+    Route::crud('doctor-verification', 'DoctorVerificationCrudController');
+    Route::get('get-all-doctors', [UserCrudController::class, 'getAllDoctors']);
+    Route::post('update-status-doctor', [DoctorVerificationCrudController::class, 'updateStatus']);
 }); // this should be the absolute last line of this file
