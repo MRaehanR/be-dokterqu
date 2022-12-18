@@ -45,6 +45,12 @@ class AuthController extends Controller
             }
 
             $user = User::where('email', $request->email)->first();
+            if (!$user->active) {
+                return response()->json([
+                    'status' => false,
+                    'message' => ($user->roles->first()->name == 'doctor' || $user->roles->first()->name == 'apotek_owner') ? 'Your data has not been verified' : 'Your Account is Disabled',
+                ], Response::HTTP_UNAUTHORIZED);
+            }
             $token = $user->createToken("API ACCESS TOKEN")->plainTextToken;
 
             return response()->json([
@@ -137,7 +143,6 @@ class AuthController extends Controller
                         'ktp' => $this->storeImage($request->file('ktp'), 'ktp'),
                     ]);
                     $user->assignRole('doctor');
-                    event(new Registered($user));
 
                     return response()->json([
                         'status' => true,

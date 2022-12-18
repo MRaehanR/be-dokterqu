@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\Image;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -27,6 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'photo',
         'phone',
+        'active',
     ];
 
     /**
@@ -47,6 +49,8 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'active' => 'boolean',
+        'photo' => Image::class,
     ];
 
     /*
@@ -107,5 +111,24 @@ class User extends Authenticatable implements MustVerifyEmail
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::make($value);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SCOPES
+    |--------------------------------------------------------------------------
+    */
+
+    public function scopeActive($query, $value)
+    {
+       return $query->where('active', $value); 
+    }
+
+    public function scopeRole($query, $name) 
+    {
+        return $query->with('roles')->whereHas('roles', function($query) use($name){
+            $query->whereIn('name', ["$name"]);
+        });
     }
 }

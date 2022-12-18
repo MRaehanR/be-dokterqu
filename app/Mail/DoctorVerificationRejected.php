@@ -7,20 +7,20 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class SendCodeResetPassword extends Mailable
+class DoctorVerificationRejected extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $code;
+    public $name;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($code)
+    public function __construct($name)
     {
-        $this->code = $code;
+        $this->name = $name;
     }
 
     /**
@@ -30,7 +30,7 @@ class SendCodeResetPassword extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.send_code_reset_password')
-                    ->subject('DokterQu Reset Password Code');
+        return $this->markdown('emails.doctor_verification_rejected')
+                    ->subject('Doctor Registration Rejected');
     }
 }

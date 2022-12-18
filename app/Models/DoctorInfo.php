@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\Image;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,6 +21,12 @@ class DoctorInfo extends Model
         'cv',
         'str',
         'ktp',
+        'status',
+    ];
+    protected $casts = [
+        'cv' => Image::class,
+        'str' => Image::class,
+        'ktp' => Image::class,
     ];
 
     
@@ -49,5 +56,17 @@ class DoctorInfo extends Model
     public function setTempatPraktikAttribute($value)
     {
         $this->attributes['tempat_praktik'] = ucwords(strtolower($value));
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SCOPES
+    |--------------------------------------------------------------------------
+    */
+
+    public function scopeStatus($query, $value)
+    {
+        return $query->where('status', $value);
     }
 }
