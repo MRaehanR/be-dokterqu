@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ApotekVerificationCrudController;
 use App\Http\Controllers\Admin\DoctorVerificationCrudController;
 use App\Http\Controllers\Admin\UserCrudController;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,14 @@ Route::group([
     Route::crud('user', 'UserCrudController');
 
     Route::crud('doctor-verification', 'DoctorVerificationCrudController');
-    Route::get('get-all-doctors', [UserCrudController::class, 'getAllDoctors']);
-    Route::post('update-status-doctor', [DoctorVerificationCrudController::class, 'updateStatus']);
+    Route::prefix('doctor')->group(function(){
+        Route::get('get-all-doctors', [UserCrudController::class, 'getAllDoctors']);
+        Route::post('update-status', [DoctorVerificationCrudController::class, 'updateStatus']);
+    });
+
+    Route::crud('apotek-verification', 'ApotekVerificationCrudController');
+    Route::prefix('apotek')->group(function(){
+        Route::get('get-all-apotek', [UserCrudController::class, 'getAllApotek']);
+        Route::post('update-status', [ApotekVerificationCrudController::class, 'updateStatus']);
+    });
 }); // this should be the absolute last line of this file

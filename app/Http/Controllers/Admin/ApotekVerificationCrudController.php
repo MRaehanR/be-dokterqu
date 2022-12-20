@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Mail\RegisterVerificationRejected;
-use App\Models\DoctorInfo;
+use App\Models\ApotekInfo;
 use App\Models\User;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -14,14 +14,12 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
-use function PHPUnit\Framework\isNull;
-
 /**
- * Class DoctorVerificationCrudController
+ * Class ApotekVerificationCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class DoctorVerificationCrudController extends CrudController
+class ApotekVerificationCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -37,10 +35,9 @@ class DoctorVerificationCrudController extends CrudController
     public function setup()
     {
         $this->crud->setModel(\App\Models\User::class);
-        $this->crud->setRoute(config('backpack.base.route_prefix') . '/doctor-verification');
-        $this->crud->setEntityNameStrings('doctor verification', 'doctor verifications');
-        $this->crud->allowAccess(['create']);
-        $this->crud->setListView('admin.doctor_verification.list');
+        $this->crud->setRoute(config('backpack.base.route_prefix') . '/apotek-verification');
+        $this->crud->setEntityNameStrings('apotek verification', 'apotek verifications');
+        $this->crud->setListView('admin.apotek_verification.list');
     }
 
     /**
@@ -68,6 +65,8 @@ class DoctorVerificationCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
+        // $this->crud->setValidation(ApotekVerificationRequest::class);
+
         $this->crud->setFromDb(); // fields
 
         /**
@@ -105,17 +104,17 @@ class DoctorVerificationCrudController extends CrudController
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
-            $doctor = DoctorInfo::where('id', $request->id)->first();
+            $apotek = ApotekInfo::where('id', $request->id)->first();
             $user = User::where('id', $request->user_id)->first();
 
-            if (!isset($doctor)) {
+            if (!isset($apotek)) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Doctor info Not Found',
+                    'message' => 'Apotek info Not Found',
                 ], Response::HTTP_NOT_FOUND);
             }
 
-            $doctor->update([
+            $apotek->update([
                 'status' => $request->status,
             ]);
 
@@ -128,7 +127,7 @@ class DoctorVerificationCrudController extends CrudController
                 $user->update([
                     'active' => 0,
                 ]);
-                Mail::to($user->email)->send(new RegisterVerificationRejected($user->name, $user->roles->first()->name));
+                Mail::to($user->email)->send(new RegisterVerificationRejected($user->name, str_replace('_owner', ' ', $user->roles->first()->name)));
             } else {
                 $user->update([
                     'active' => 0,
@@ -137,7 +136,7 @@ class DoctorVerificationCrudController extends CrudController
 
             return response()->json([
                 'status' => true,
-                'message' => 'Doctor Info status has been updated',
+                'message' => 'Apotek Info status has been updated',
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
