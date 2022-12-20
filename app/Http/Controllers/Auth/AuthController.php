@@ -191,7 +191,6 @@ class AuthController extends Controller
                         'longitude' => $request->longitude,
                     ]);
                     $user->assignRole('apotek_owner');
-                    event(new Registered($user));
 
                     return response()->json([
                         'status' => true,

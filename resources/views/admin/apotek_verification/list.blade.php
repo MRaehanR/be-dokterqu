@@ -70,14 +70,14 @@
                         <div role="tabpanel" class="tab-pane active" id="tab_open">
                             <div class="row">
                                 <div class="col-md-12 bold-labels" style="width:100%">
-                                    <table id="open_doctor_verification_table"
+                                    <table id="open_apotek_verification_table"
                                         class="bg-white table table-striped table-hover rounded shadow-xs border-xs mt-2"
                                         style="width:100%" cellspacing="0">
                                         <thead>
                                             <tr>
                                                 <th>User</th>
                                                 <th>Status</th>
-                                                <th>Pengalaman</th>
+                                                <th>Apotek</th>
                                                 <th>Requested At</th>
                                                 <th>Actions</th>
                                             </tr>
@@ -97,13 +97,13 @@
                         <div role="tabpanel" class="tab-pane" id="tab_accepted">
                             <div class="row">
                                 <div class="col-md-12 bold-labels" style="width:100%">
-                                    <table id="accepted_doctor_verification_table" class="bg-white table table-striped border-xs mt-2"
+                                    <table id="accepted_apotek_verification_table" class="bg-white table table-striped border-xs mt-2"
                                         style="width:100%" cellspacing="0">
                                         <thead>
                                           <tr>
                                               <th>User</th>
                                               <th>Status</th>
-                                              <th>Pengalaman</th>
+                                              <th>Apotek</th>
                                               <th>Requested At</th>
                                               <th>Actions</th>
                                           </tr>
@@ -123,13 +123,13 @@
                         <div role="tabpanel" class="tab-pane" id="tab_rejected">
                             <div class="row">
                                 <div class="col-md-12 bold-labels" style="width:100%">
-                                    <table id="rejected_doctor_verification_table" class="bg-white table table-striped border-xs mt-2"
+                                    <table id="rejected_apotek_verification_table" class="bg-white table table-striped border-xs mt-2"
                                         style="width:100%" cellspacing="0">
                                         <thead>
                                           <tr>
                                               <th>User</th>
                                               <th>Status</th>
-                                              <th>Pengalaman</th>
+                                              <th>Apotek</th>
                                               <th>Requested At</th>
                                               <th>Actions</th>
                                           </tr>
@@ -200,27 +200,33 @@
                         <div class="col-sm">
                             <div class="card">
                                 <div class="card-header">
-                                    <b>Doctor Info</b>
+                                    <b>Apotek Info</b>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-4"><label>Alumnus</label></div>
-                                        <div class="col-md-8"><label id="detail_alumnus"></label></div>
+                                        <div class="col-md-4"><label>Name</label></div>
+                                        <div class="col-md-8"><label id="detail_name_apotek"></label></div>
 
-                                        <div class="col-md-4"><label>Tempat Praktik</label></div>
-                                        <div class="col-md-8"><label id="detail_tempat_praktik"></label></div>
+                                        <div class="col-md-4"><label>Address</label></div>
+                                        <div class="col-md-8"><label id="detail_address"></label></div>
 
-                                        <div class="col-md-4"><label>Pengalaman</label></div>
-                                        <div class="col-md-8"><label id="detail_experience"></label></div>
+                                        <div class="col-md-4"><label>Latitude</label></div>
+                                        <div class="col-md-8"><label id="detail_latitude"></label></div>
 
-                                        <div class="col-md-4"><label>Spesialis</label></div>
-                                        <div class="col-md-8"><label id="detail_type_doctor"></label></div>
+                                        <div class="col-md-4"><label>Longitude</label></div>
+                                        <div class="col-md-8"><label id="detail_longitude"></label></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row text-center mt-1">
+                    <div class="row text-center mt-1 mb-1">
+                        <div class="col">
+                            <div><b>Apotek Image</b></div>
+                            <img id="detail_image_apotek" width="25%" height="auto">
+                        </div>
+                    </div>
+                    <div class="row text-center mt-5">
                         <div class="col-md-6">
                             <div><b>Photo</b></div>
                             <img id="detail_photo_profile" width="50%" height="auto">
@@ -232,12 +238,27 @@
                     </div>
                     <div class="row text-center mt-5">
                         <div class="col-md-6">
-                            <div><b>Surat Tanda Registrasi</b></div>
-                            <img id="detail_str" width="50%" height="auto">
+                            <div><b>NPWP</b></div>
+                            <img id="detail_npwp" width="50%" height="auto">
                         </div>
                         <div class="col-md-6">
-                            <div><b>Curriculum Vitae</b></div>
-                            <img id="detail_cv" width="50%" height="auto">
+                            <div><b>Surat Izin Usaha</b></div>
+                            <img id="detail_surat_izin_usaha" width="50%" height="auto">
+                        </div>
+                    </div>
+                    <div class="row text-center mt-5">
+                        <div class="col">
+                            <div><b>Apotek Location</b></div>
+                            <iframe
+                                id="detail_maps"
+                                width="50%"
+                                height="500"
+                                frameborder="0"
+                                scrolling="no"
+                                marginheight="0"
+                                marginwidth="0"
+                            >
+                            </iframe>
                         </div>
                     </div>
                 </div>
@@ -268,7 +289,7 @@
 @section('after_scripts')
     @include('crud::inc.datatables_logic')
 
-    <script src="{{ asset('js/doctor_verification.js') }}"></script>
+    <script src="{{ asset('js/apotek_verification.js') }}"></script>
     <script>
         const url = "{{ backpack_url() }}";
 
@@ -279,18 +300,28 @@
             $('#detail_email').html($(this).data('email'));
             $('#detail_phone').html($(this).data('phone'));
 
-            // Doctor Info
-            $('#detail_alumnus').html($(this).data('alumnus'));
-            $('#detail_tempat_praktik').html($(this).data('tempat_praktik'));
-            $('#detail_experience').html($(this).data('experience'));
-            $('#detail_type_doctor').html($(this).data('type_doctor'));
+            // Apotek Info
+            $('#detail_name_apotek').html($(this).data('name_apotek'));
+            $('#detail_address').html($(this).data('address'));
+            $('#detail_latitude').html($(this).data('latitude'));
+            $('#detail_longitude').html($(this).data('longitude'));
 
 
             // Images
+            $('#detail_image_apotek').attr('src', $(this).data('image_apotek'));
             $('#detail_photo_profile').attr('src', $(this).data('photo'));
             $('#detail_ktp').attr('src', $(this).data('ktp'));
-            $('#detail_str').attr('src', $(this).data('str'));
-            $('#detail_cv').attr('src', $(this).data('cv'));
+            $('#detail_npwp').attr('src', $(this).data('npwp'));
+            $('#detail_surat_izin_usaha').attr('src', $(this).data('surat_izin_usaha'));
+
+            // Maps
+            let latitude = $(this).data('latitude');
+            let longitude = $(this).data('longitude');
+
+            console.log('latitude: ', latitude);
+            console.log('longitude: ', longitude);
+
+            $('#detail_maps').attr('src', `https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d1510.345323556068!2d${longitude}!3d${latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sid!4v1671536568574!5m2!1sen!2sid`);
 
             $('#detail_modal').modal('show');
           });
@@ -300,7 +331,7 @@
             let id = $('.btn_accept').data('id');
             let userId = $('.btn_accept').data('user_id');
             swal({
-                title: "Accept Doctor Info?",
+                title: "Accept apotek Info?",
                 text: "Are you sure? This action can't be undone",
                 icon: "warning",
                 buttons: {
@@ -320,7 +351,7 @@
                         closeOnClickOutside: false,
                     });
                     $.ajax({
-                        url: url + '/update-status-doctor',
+                        url: url + '/apotek/update-status',
                         type: 'POST',
                         data: {
                             id: id,
@@ -358,7 +389,7 @@
            let id = $('.btn_reject').data('id');
            let userId = $('.btn_reject').data('user_id');
             swal({
-                title: "Reject Doctor Info?",
+                title: "Reject apotek Info?",
                 text: "Are you sure? This action can't be undone",
                 icon: "warning",
                 buttons: {
@@ -378,7 +409,7 @@
                         closeOnClickOutside: false,
                     });
                     $.ajax({
-                        url: url + '/update-status-doctor',
+                        url: url + '/apotek/update-status',
                         type: 'POST',
                         data: {
                             id: id,

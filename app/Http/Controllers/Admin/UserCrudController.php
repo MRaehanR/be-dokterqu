@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\UserRequest;
+use App\Models\ApotekInfo;
 use App\Models\DoctorInfo;
 use App\Models\User;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
@@ -196,6 +197,34 @@ class UserCrudController extends CrudController
                 'status' => true,
                 'message' => 'Get doctors success',
                 'data' => $doctors->get(),
+            ], Response::HTTP_CREATED);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function getAllApotek(Request $request)
+    {
+        try {
+            $apotek = ApotekInfo::with('user');
+            if (isset($request->status)) {
+                if ($request->status == 'open') {
+                    $apotek = $apotek->status('open');
+                } else if ($request->status == 'accepted') {
+                    $apotek = $apotek->status('accepted');
+                } else if ($request->status == 'rejected') {
+                    $apotek = $apotek->status('rejected');
+                }
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Get apotek success',
+                'data' => $apotek->get(),
             ], Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());

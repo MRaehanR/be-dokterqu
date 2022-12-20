@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\Image;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,6 +21,13 @@ class ApotekInfo extends Model
         'image',
         'latitude',
         'longitude',
+        'status',
+    ];
+    protected $casts = [
+        'ktp' => Image::class,
+        'npwp' => Image::class,
+        'surat_izin_usaha' => Image::class,
+        'image' => Image::class,
     ];
 
     
@@ -44,5 +52,17 @@ class ApotekInfo extends Model
     public function setNameAttribute($value)
     {
         $this->attributes['name'] = ucwords(strtolower($value));
+    }
+
+    
+    /*
+    |--------------------------------------------------------------------------
+    | SCOPES
+    |--------------------------------------------------------------------------
+    */
+
+    public function scopeStatus($query, $value)
+    {
+        return $query->where('status', $value);
     }
 }
