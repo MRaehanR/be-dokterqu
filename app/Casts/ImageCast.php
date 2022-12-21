@@ -4,7 +4,7 @@ namespace App\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
-class Image implements CastsAttributes
+class ImageCast implements CastsAttributes
 {
     /**
      * Cast the given value.

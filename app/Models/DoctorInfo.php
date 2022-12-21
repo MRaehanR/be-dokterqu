@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Casts\Image;
+use App\Casts\ImageCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,9 +24,12 @@ class DoctorInfo extends Model
         'status',
     ];
     protected $casts = [
-        'cv' => Image::class,
-        'str' => Image::class,
-        'ktp' => Image::class,
+        'cv' => ImageCast::class,
+        'str' => ImageCast::class,
+        'ktp' => ImageCast::class,
+    ];
+    protected $appends = [
+        'type_doctor',
     ];
 
     
@@ -39,6 +42,19 @@ class DoctorInfo extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACCESSORS
+    |--------------------------------------------------------------------------
+    */
+
+    public function getTypeDoctorAttribute()
+    {
+        $type = DoctorType::where('id', $this->type_doctor_id)->first()->name;
+        return ucfirst($type);
     }
 
     
