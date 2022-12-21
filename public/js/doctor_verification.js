@@ -71,7 +71,7 @@ $(function() {
                 {data: 'id', render: function(data, type, row, meta) {
                     let html = '';
 
-                    html += '<button class="btn_detail btn btn-inline-block btn-secondary mr-1" type="button" data-toggle="modal" onclick="detailModal()" data-id="'+data+'" data-name="'+row.user.name+'" data-email="'+row.user.email+'" data-phone="'+row.user.phone+'" data-photo="'+row.user.photo+'" data-alumnus="'+row.alumnus+", "+row.alumnus_tahun+'" data-experience="'+row.experience+" Tahun"+'" data-tempat_praktik="'+row.tempat_praktik+'" data-type_doctor="'+row.type_doctor_id+'" data-cv="'+row.cv+'" data-str="'+row.str+'" data-ktp="'+row.ktp+'" data-photo="'+row.user.photo+'">Detail</button>'
+                    html += '<button class="btn_detail btn btn-inline-block btn-secondary mr-1" type="button" data-toggle="modal" onclick="detailModal()" data-id="'+data+'" data-name="'+row.user.name+'" data-email="'+row.user.email+'" data-phone="'+row.user.phone+'" data-photo="'+row.user.photo+'" data-alumnus="'+row.alumnus+", "+row.alumnus_tahun+'" data-experience="'+row.experience+" Tahun"+'" data-tempat_praktik="'+row.tempat_praktik+'" data-type_doctor="'+row.type_doctor+'" data-cv="'+row.cv+'" data-str="'+row.str+'" data-ktp="'+row.ktp+'" data-photo="'+row.user.photo+'">Detail</button>'
                     
                     if(row.status == 'open'){
                         html += '<button class="btn_accept btn btn-inline-block btn-success mr-1" type="button" data-id="'+data+'" data-user_id="'+row.user_id+'" onclick="acceptEntry()">Accept</button>'

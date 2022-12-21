@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Casts\Image;
+use App\Casts\ImageCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,10 +24,10 @@ class ApotekInfo extends Model
         'status',
     ];
     protected $casts = [
-        'ktp' => Image::class,
-        'npwp' => Image::class,
-        'surat_izin_usaha' => Image::class,
-        'image' => Image::class,
+        'ktp' => ImageCast::class,
+        'npwp' => ImageCast::class,
+        'surat_izin_usaha' => ImageCast::class,
+        'image' => ImageCast::class,
     ];
 
     
