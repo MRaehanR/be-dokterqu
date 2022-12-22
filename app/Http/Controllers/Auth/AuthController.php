@@ -85,6 +85,7 @@ class AuthController extends Controller
                     'password' => 'required|confirmed',
                     'photo' => 'mimes:jpg,png,jpeg,bmp|max:2048',
                     'phone' => 'required|unique:users',
+                    'gender' => 'required|in:m,f',
                     'role' => 'required',
                 ]
             );
@@ -103,6 +104,7 @@ class AuthController extends Controller
                 'password' => $request->password,
                 'photo' => $this->storeImage($request->file('photo'), 'photo_profile'),
                 'phone' => $request->phone,
+                'gender' => $request->gender,
             ]);
 
             switch ($request->role) {

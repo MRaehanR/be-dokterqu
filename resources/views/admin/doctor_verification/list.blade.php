@@ -278,6 +278,7 @@
             $('#detail_name').html($(this).data('name'));
             $('#detail_email').html($(this).data('email'));
             $('#detail_phone').html($(this).data('phone'));
+            $('#detail_gender').html($(this).data('gender'));
 
             // Doctor Info
             $('#detail_alumnus').html($(this).data('alumnus'));
