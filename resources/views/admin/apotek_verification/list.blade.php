@@ -299,6 +299,7 @@
             $('#detail_name').html($(this).data('name'));
             $('#detail_email').html($(this).data('email'));
             $('#detail_phone').html($(this).data('phone'));
+            $('#detail_gender').html($(this).data('gender'));
 
             // Apotek Info
             $('#detail_name_apotek').html($(this).data('name_apotek'));
