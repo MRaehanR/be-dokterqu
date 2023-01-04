@@ -19,6 +19,7 @@ class UserSeeder extends Seeder
             'email' => 'superadmin@gmail.com',
             'password' => 'op[kl;m,.',
             'phone' => '085718127384',
+            'active' => 1,
         ]);
 
         $user->assignRole('superadmin');

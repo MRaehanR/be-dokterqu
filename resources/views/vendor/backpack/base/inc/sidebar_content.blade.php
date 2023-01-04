@@ -2,6 +2,16 @@
 <li class="nav-item"><a class="nav-link" href="{{ backpack_url('dashboard') }}"><i class="la la-home nav-icon"></i> {{ trans('backpack::base.dashboard') }}</a></li>
 
 
+{{-- Articles --}}
+<li class="nav-item nav-dropdown open"><a class="nav-link nav-dropdown-toggle" href="#">Articles</a>
+    <ul class="nav-dropdown-items">
+        <li class="nav-item"><a class="nav-link" href="{{ backpack_url('article-post') }}"><i class="nav-icon la la-newspaper"></i> Posts</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ backpack_url('article-category') }}"><i class="nav-icon la la-tags"></i> Categories</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ backpack_url('article-comment') }}"><i class="nav-icon la la-comment-dots"></i> Comments</a></li>
+    </ul>
+</li>
+
+
 {{-- Authentication --}}
 @if(backpack_user()->can('manage_users'))
 <li class="nav-item nav-dropdown open"><a class="nav-link nav-dropdown-toggle" href="#">Authentication</a>
@@ -14,4 +24,5 @@
     </ul>
 </li>
 @endif
+
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('log') }}'><i class='nav-icon la la-terminal'></i> Logs</a></li>

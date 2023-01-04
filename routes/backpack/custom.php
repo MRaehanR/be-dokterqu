@@ -32,4 +32,8 @@ Route::group([
         Route::get('get-all-apotek', [UserCrudController::class, 'getAllApotek']);
         Route::post('update-status', [ApotekVerificationCrudController::class, 'updateStatus']);
     });
+
+    Route::crud('article-category', 'ArticleCategoryCrudController');
+    Route::crud('article-post', 'ArticlePostCrudController');
+    Route::crud('article-comment', 'ArticleCommentCrudController');
 }); // this should be the absolute last line of this file
