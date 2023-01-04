@@ -32,9 +32,9 @@ class UserCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\User::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/user');
-        CRUD::setEntityNameStrings('user', 'users');
+        $this->crud->setModel(\App\Models\User::class);
+        $this->crud->setRoute(config('backpack.base.route_prefix') . '/user');
+        $this->crud->setEntityNameStrings('user', 'users');
     }
 
     /**
@@ -45,11 +45,11 @@ class UserCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        // CRUD::column('name');
-        // CRUD::column('email');
-        // CRUD::column('role_id');
-        // CRUD::column('photo');
-        // CRUD::column('phone');
+        // $this->crud->column('name');
+        // $this->crud->column('email');
+        // $this->crud->column('role_id');
+        // $this->crud->column('photo');
+        // $this->crud->column('phone');
 
         $this->crud->addColumns([
             [
@@ -86,8 +86,8 @@ class UserCrudController extends CrudController
 
         /**
          * Columns can be defined using the fluent syntax or array syntax:
-         * - CRUD::column('price')->type('number');
-         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']); 
+         * - $this->crud->column('price')->type('number');
+         * - $this->crud->addColumn(['name' => 'price', 'type' => 'number']); 
          */
     }
 
@@ -99,14 +99,14 @@ class UserCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(UserRequest::class);
+        $this->crud->setValidation(UserRequest::class);
 
-        // CRUD::field('name');
-        // CRUD::field('email');
-        // CRUD::field('password');
-        // CRUD::field('role_id');
-        // CRUD::field('photo');
-        // CRUD::field('phone');
+        // $this->crud->field('name');
+        // $this->crud->field('email');
+        // $this->crud->field('password');
+        // $this->crud->field('role_id');
+        // $this->crud->field('photo');
+        // $this->crud->field('phone');
 
         $this->crud->addFields([
             [
@@ -162,8 +162,8 @@ class UserCrudController extends CrudController
 
         /**
          * Fields can be defined using the fluent syntax or array syntax:
-         * - CRUD::field('price')->type('number');
-         * - CRUD::addField(['name' => 'price', 'type' => 'number'])); 
+         * - $this->crud->field('price')->type('number');
+         * - $this->crud->addField(['name' => 'price', 'type' => 'number'])); 
          */
     }
 
@@ -197,7 +197,7 @@ class UserCrudController extends CrudController
                 'status' => true,
                 'message' => 'Get doctors success',
                 'data' => $doctors->get(),
-            ], Response::HTTP_CREATED);
+            ], Response::HTTP_OK);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return response()->json([
@@ -225,7 +225,7 @@ class UserCrudController extends CrudController
                 'status' => true,
                 'message' => 'Get apotek success',
                 'data' => $apotek->get(),
-            ], Response::HTTP_CREATED);
+            ], Response::HTTP_OK);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return response()->json([

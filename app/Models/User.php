@@ -80,6 +80,21 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(CustomerAddress::class, 'user_id');
     }
 
+    public function article()
+    {
+        return $this->hasMany(ArticlePost::class, 'upload_by');
+    }
+
+    public function comment()
+    {
+        return $this->hasMany(ArticleComment::class);
+    }
+
+    public function articleLike()
+    {
+        return $this->hasMany(ArticleLike::class);
+    }
+
 
     /*
     |--------------------------------------------------------------------------
