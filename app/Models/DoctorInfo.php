@@ -44,6 +44,11 @@ class DoctorInfo extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function doctorType()
+    {
+        return $this->belongsTo(DoctorType::class, 'id');
+    }
+
 
     /*
     |--------------------------------------------------------------------------

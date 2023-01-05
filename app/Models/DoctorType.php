@@ -13,4 +13,16 @@ class DoctorType extends Model
     protected $fillable = [
         'name',
     ];
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONSHIPS
+    |--------------------------------------------------------------------------
+    */
+
+    public function doctorInfo()
+    {
+        return $this->hasMany(DoctorInfo::class, 'type_doctor_id');
+    }
 }

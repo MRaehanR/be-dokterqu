@@ -102,11 +102,6 @@ class User extends Authenticatable implements MustVerifyEmail
     |--------------------------------------------------------------------------
     */
 
-    public function getPhotoProfileAttribute()
-    {
-        return (isset($this->photo)) ? env('APP_URL') . '/' . $this->photo : null;
-    }
-
     public function getEmailVerifiedAttribute()
     {
         return isset($this->email_verified_at);
