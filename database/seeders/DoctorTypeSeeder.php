@@ -14,8 +14,10 @@ class DoctorTypeSeeder extends Seeder
      */
     public function run()
     {
-        DoctorType::create(['name' => 'mata']);
-        DoctorType::create(['name' => 'telinga']);
-        DoctorType::create(['name' => 'kulit']);
+        DoctorType::create(['name' => 'Sp. mata']);
+        DoctorType::create(['name' => 'Sp. THT']);
+        DoctorType::create(['name' => 'Sp. kulit & kelamin']);
+        DoctorType::create(['name' => 'dokter gigi']);
+        DoctorType::create(['name' => 'Sp. konservasi gigi']);
     }
 }
