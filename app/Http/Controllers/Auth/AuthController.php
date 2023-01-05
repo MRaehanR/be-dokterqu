@@ -60,7 +60,7 @@ class AuthController extends Controller
                     'name' => $user->name,
                     'email' => $user->email,
                     'email_verified' => $user->email_verified,
-                    'photo' => $user->photo,
+                    'photo' => $user->photo_profile,
                     'role' => $user->roles->first()->name,
                     'token' => $token,
                 ],

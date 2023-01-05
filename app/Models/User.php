@@ -51,7 +51,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'active' => 'boolean',
-        'photo' => ImageCast::class,
+        // 'photo' => ImageCast::class,
     ];
 
     /*
@@ -105,6 +105,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getEmailVerifiedAttribute()
     {
         return isset($this->email_verified_at);
+    }
+
+    public function getPhotoProfileAttribute()
+    {
+        if(!$this->photo){
+            if($this->roles->first()->name == 'doctor') return env('APP_URL', url('/'))."/images/default/default_photo_profile_doctor.jpeg";
+            
+            return env('APP_URL', url('/'))."/images/default/default_photo_profile_customer.png";
+        }
+        return env('APP_URL', url('/'))."/".$this->photo;
     }
 
 

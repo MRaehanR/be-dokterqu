@@ -40,7 +40,7 @@ class ArticleCommentController extends Controller
                 array_push($data, [
                     'user' => [
                         'name' => $comment->user->name,
-                        'photo' => $comment->user->photo,
+                        'photo' => $comment->user->photo_profile,
                     ],
                     'body' => $comment->body,
                     'created_at' => $comment->created_at->diffForHumans(),
@@ -102,8 +102,10 @@ class ArticleCommentController extends Controller
                 'status' => true,
                 'message' => 'Set article comments success',
                 'data' => [
-                    'name' => $comment->user->name,
-                    'photo' => $comment->user->photo,
+                    'user' => [
+                        'name' => $comment->user->name,
+                        'photo' => $comment->user->photo_profile,
+                    ],
                     'body' => $comment->body,
                     'created_at' => $comment->created_at->diffForHumans(),
                 ],

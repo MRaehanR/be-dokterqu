@@ -71,7 +71,7 @@ class UserCrudController extends CrudController
                 'model'     => config('permission.models.role'), // foreign key model
             ],
             [
-                'name' => 'photo',
+                'name' => 'photo_profile',
                 'label' => 'Photo',
                 'type' => 'image'
             ],
