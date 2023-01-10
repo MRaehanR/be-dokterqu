@@ -15,7 +15,7 @@ class CreateCustomerControlsTable extends Migration
     {
         Schema::create('customer_controls', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('doctor_user_id');
+            $table->foreignId('doctor_user_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->dateTime('start_date');
             $table->dateTime('next_date');
             $table->dateTime('end_date');

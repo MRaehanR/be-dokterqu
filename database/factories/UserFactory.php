@@ -67,9 +67,11 @@ class UserFactory extends Factory
                 'rejected',
             ];
 
+            $typeDoctorCount = count(DoctorType::all());
+
             $doctorInfo = DoctorInfo::create([
                 'user_id' => $user->id,
-                'type_doctor_id' => rand(1, count(DoctorType::all())),
+                'type_doctor_id' => rand(1, $typeDoctorCount),
                 'experience' => rand(1, 10),
                 'alumnus' => 'universitas indonesia',
                 'alumnus_tahun' => '20' . rand(10, 22),

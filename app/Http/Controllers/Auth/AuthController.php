@@ -37,6 +37,13 @@ class AuthController extends Controller
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
+            if(!User::where('email', $request->email)->first()){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Your account has not been registered.',
+                ], Response::HTTP_NOT_FOUND);
+            }
+
             if (!Auth::attempt($request->only(['email', 'password']))) {
                 return response()->json([
                     'status' => false,
@@ -60,7 +67,7 @@ class AuthController extends Controller
                     'name' => $user->name,
                     'email' => $user->email,
                     'email_verified' => $user->email_verified,
-                    'photo' => $user->photo_profile,
+                    'photo' => $user->photo,
                     'role' => $user->roles->first()->name,
                     'token' => $token,
                 ],
@@ -102,7 +109,7 @@ class AuthController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => $request->password,
-                'photo' => $this->storeImage($request->file('photo'), 'photo_profile'),
+                'photo' => $request->file('photo'),
                 'phone' => $request->phone,
                 'gender' => $request->gender,
             ]);
@@ -206,6 +213,7 @@ class AuthController extends Controller
 
                 // Customer
                 case 3:
+                    $user->active = 1;
                     $user->save();
                     $user->assignRole('customer');
 

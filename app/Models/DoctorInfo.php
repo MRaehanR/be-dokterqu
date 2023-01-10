@@ -28,9 +28,6 @@ class DoctorInfo extends Model
         'str' => ImageCast::class,
         'ktp' => ImageCast::class,
     ];
-    protected $appends = [
-        'type_doctor',
-    ];
 
     
     /*
@@ -46,7 +43,7 @@ class DoctorInfo extends Model
 
     public function doctorType()
     {
-        return $this->belongsTo(DoctorType::class, 'id');
+        return $this->belongsTo(DoctorType::class, 'type_doctor_id');
     }
 
 
@@ -56,11 +53,7 @@ class DoctorInfo extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function getTypeDoctorAttribute()
-    {
-        $type = DoctorType::where('id', $this->type_doctor_id)->first()->name;
-        return ucfirst($type);
-    }
+    
 
     
     /*

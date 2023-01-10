@@ -15,10 +15,10 @@ class CreateArticlePostsTable extends Migration
     {
         Schema::create('article_posts', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('upload_by');
-            $table->integer('category_id');
+            $table->foreignId('upload_by')->constrained('users')->cascadeOnUpdate();
+            $table->foreignId('category_id')->constrained('article_categories')->cascadeOnUpdate();
             $table->enum('status', ['draft', 'published'])->default('draft');
-            $table->string('thumbnail');
+            $table->string('thumbnail')->nullable();
             $table->string('title');
             $table->text('body');
             $table->string('slug');

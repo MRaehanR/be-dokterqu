@@ -15,8 +15,8 @@ class CreateDoctorInfoTable extends Migration
     {
         Schema::create('doctor_info', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id');
-            $table->integer('type_doctor_id');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('type_doctor_id')->constrained('doctor_type')->cascadeOnUpdate();
             $table->integer('experience');
             $table->string('alumnus');
             $table->integer('alumnus_tahun');

@@ -63,10 +63,10 @@ class ArticlePostCrudController extends CrudController
             ],
             [
                 'label' => 'Upload By',
-                'type' => 'text',
+                'type' => 'select',
                 'name' => 'author',
+                'attribute' => 'name',
                 // 'entity' => 'uploadBy',
-                // 'attribute' => 'name',
                 // 'model' => 'App\Models\User',
             ],
             // [

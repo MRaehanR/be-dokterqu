@@ -15,9 +15,9 @@ class CreateArticleCommentsTable extends Migration
     {
         Schema::create('article_comments', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id');
-            $table->bigInteger('parent_id')->nullable();
-            $table->bigInteger('article_post_id');
+            $table->foreignId('user_id')->constrained()->cascadeOnUpdate();
+            $table->foreignId('parent_id')->nullable()->constrained('article_comments')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('article_post_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->text('body');
             $table->timestamps();
         });

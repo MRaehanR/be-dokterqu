@@ -18,10 +18,10 @@ class ArticleCategoryController extends Controller
 
             foreach ($categories as $category) {
                 array_push($data, [
-                    'name' => ucfirst($category->name),
+                    'name' => ucwords($category->name),
                     'article_post_count' => $category->articlePost()->count(),
                     'links' => [
-                        'article' => '/article/post?category='.$category->name,
+                        'article' => '/article/post?category='.urlencode($category->name),
                     ]
                 ]);
             }

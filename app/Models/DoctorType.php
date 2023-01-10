@@ -23,6 +23,18 @@ class DoctorType extends Model
 
     public function doctorInfo()
     {
-        return $this->hasMany(DoctorInfo::class, 'type_doctor_id');
+        return $this->hasMany(DoctorInfo::class);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACCESSORS
+    |--------------------------------------------------------------------------
+    */
+
+    public function getNameAttribute($value)
+    {
+        return ucwords($value);
     }
 }

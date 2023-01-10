@@ -15,9 +15,9 @@ class CreateApotekInfoTable extends Migration
     {
         Schema::create('apotek_info', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id');
-            $table->string('name');
-            $table->string('address');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('name', 50);
+            $table->string('address', 100);
             $table->string('ktp');
             $table->string('npwp');
             $table->string('surat_izin_usaha');

@@ -33,6 +33,6 @@ class RegisterVerificationRejected extends Mailable
     public function build()
     {
         return $this->markdown('emails.register_verification_rejected')
-                    ->subject(ucfirst($this->role)." Registration Rejected");
+                    ->subject(ucwords($this->role)." Registration Rejected");
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Casts\ImageCast;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,9 +21,6 @@ class ArticlePost extends Model
         'thumbnail',
         'status',
     ];
-    protected $casts = [
-        'thumbnail' => ImageCast::class,
-    ];
 
 
     /*
@@ -40,12 +36,12 @@ class ArticlePost extends Model
 
     public function author()
     {
-        return $this->belongsTo(User::class, 'id');
+        return $this->belongsTo(User::class, 'upload_by');
     }
 
     public function comment()
     {
-        return $this->hasMany(ArticleComment::class, 'article_post_id');
+        return $this->hasMany(ArticleComment::class);
     }
 
     public function like()
@@ -60,17 +56,15 @@ class ArticlePost extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function getAuthorAttribute()
+    public function getThumbnailAttribute($value)
     {
-        $name = User::where('id', $this->upload_by)->first()->name;
-        return ucfirst($name);
+        if(!$value){
+            return env('APP_URL', url('/'))."/images/default/default_thumbnail.png";
+        }
+        return env('APP_URL', url('/'))."/".$value;
     }
 
-    public function getCategoryNameAttribute()
-    {
-        $category = ArticleCategory::where('id', $this->category_id)->first()->name;
-        return $category;
-    }
+
 
     
     /*
@@ -81,13 +75,17 @@ class ArticlePost extends Model
 
     public function setThumbnailAttribute($value)
     {
-        $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($value) . "." . $value->getClientOriginalExtension();
-        $filePath = "storage/images/article_thumbnail/" . $fileName;
-        $value->storeAs(
-            "public/images/article_thumbnail",
-            $fileName
-        );
-        $this->attributes['thumbnail'] = $filePath;
+        if ($value) {
+            $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($value) . "." . $value->getClientOriginalExtension();
+            $filePath = "storage/images/article_thumbnail/" . $fileName;
+            $value->storeAs(
+                "public/images/article_thumbnail",
+                $fileName
+            );
+            $this->attributes['thumbnail'] = $filePath;
+        } else {
+            $this->attributes['thumbnail'] = null;
+        }
     }
 
 
