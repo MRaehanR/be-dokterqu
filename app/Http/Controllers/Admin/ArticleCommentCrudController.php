@@ -43,10 +43,14 @@ class ArticleCommentCrudController extends CrudController
     protected function setupListOperation()
     {
         $this->crud->column('user_id');
-        $this->crud->column('parent_id');
-        // $this->crud->column('article_post_id');
+        $this->crud->addColumn([
+            'label' => 'Reply To',
+            'name' => 'parent_id',
+            'type' => 'select',
+            'entity' => 'child.user',
+            'attribute' => 'name',
+        ]);
         $this->crud->column('body')->label('Comment');
-
         $this->crud->addColumn([
             'label' => 'Articles',
             'name' => 'article_post_id',

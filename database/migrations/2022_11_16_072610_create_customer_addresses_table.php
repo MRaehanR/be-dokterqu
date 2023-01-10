@@ -15,11 +15,12 @@ class CreateCustomerAddressesTable extends Migration
     {
         Schema::create('customer_addresses', function (Blueprint $table) {
             $table->id();
-            $table->string('label');
-            $table->string('address');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('label', 20);
+            $table->string('address', 100);
             $table->text('note')->nullable();
-            $table->string('recipient');
-            $table->string('phone');
+            $table->string('recipient', 20);
+            $table->string('phone', 15);
             $table->double('latitude');
             $table->double('longitude');
             $table->timestamps();

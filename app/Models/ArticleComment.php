@@ -31,6 +31,11 @@ class ArticleComment extends Model
 
     public function post()
     {
-        return $this->belongsTo(ArticlePost::class, 'id');
+        return $this->belongsTo(ArticlePost::class, 'article_post_id');
+    }
+
+    public function child()
+    {
+        return $this->hasMany(ArticleComment::class, 'id', 'parent_id');
     }
 }

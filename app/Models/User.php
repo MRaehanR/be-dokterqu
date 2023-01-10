@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Casts\ImageCast;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -51,7 +51,6 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'active' => 'boolean',
-        // 'photo' => ImageCast::class,
     ];
 
     /*
@@ -70,22 +69,17 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(ApotekInfo::class, 'user_id');
     }
 
-    public function customerInfo()
-    {
-        return $this->hasOne(CustomerInfo::class, 'user_id');
-    }
-
     public function customerAddress()
     {
         return $this->hasMany(CustomerAddress::class, 'user_id');
     }
 
-    public function article()
+    public function articlePost()
     {
         return $this->hasMany(ArticlePost::class, 'upload_by');
     }
 
-    public function comment()
+    public function articleComment()
     {
         return $this->hasMany(ArticleComment::class);
     }
@@ -107,14 +101,24 @@ class User extends Authenticatable implements MustVerifyEmail
         return isset($this->email_verified_at);
     }
 
-    public function getPhotoProfileAttribute()
+    public function getPhotoAttribute($value)
     {
-        if(!$this->photo){
-            if($this->roles->first()->name == 'doctor') return env('APP_URL', url('/'))."/images/default/default_photo_profile_doctor.jpeg";
+        if(!$value){
+            if($this->roles->first()->name == 'doctor' && $this->gender == 'male') return env('APP_URL', url('/'))."/images/default/default_photo_profile_doctor_male.webp";
+            if($this->roles->first()->name == 'doctor' && $this->gender == 'female') return env('APP_URL', url('/'))."/images/default/default_photo_profile_doctor_female.jpeg";
             
             return env('APP_URL', url('/'))."/images/default/default_photo_profile_customer.png";
         }
-        return env('APP_URL', url('/'))."/".$this->photo;
+        return env('APP_URL', url('/'))."/".$value;
+    }
+
+    public function getGenderAttribute($value)
+    {
+        if($value === 'm'){
+            return 'male';
+        } else if($value === 'f'){
+            return 'female';
+        }
     }
 
 
@@ -132,6 +136,21 @@ class User extends Authenticatable implements MustVerifyEmail
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::make($value);
+    }
+
+    public function setPhotoAttribute($value)
+    {
+        if ($value) {
+            $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($value) . "." . $value->getClientOriginalExtension();
+            $filePath = "storage/images/photo_profile/" . $fileName;
+            $value->storeAs(
+                "public/images/photo_profile",
+                $fileName
+            );
+            $this->attributes['photo'] = $filePath;
+        } else {
+            return $this->attributes['photo'] = null;
+        }
     }
 
 

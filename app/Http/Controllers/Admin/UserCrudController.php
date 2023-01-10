@@ -71,7 +71,7 @@ class UserCrudController extends CrudController
                 'model'     => config('permission.models.role'), // foreign key model
             ],
             [
-                'name' => 'photo_profile',
+                'name' => 'photo',
                 'label' => 'Photo',
                 'type' => 'image'
             ],
@@ -182,7 +182,7 @@ class UserCrudController extends CrudController
     public function getAllDoctors(Request $request)
     {
         try {
-            $doctors = DoctorInfo::with('user');
+            $doctors = DoctorInfo::with(['user', 'doctorType']);
             if (isset($request->status)) {
                 if ($request->status == 'open') {
                     $doctors = $doctors->status('open');

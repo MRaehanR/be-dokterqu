@@ -17,12 +17,14 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RoleAndPermissionSeeder::class,
-            UserSeeder::class,
             DoctorTypeSeeder::class,
+            ArticleCategorySeeder::class,
+            UserSeeder::class,
         ]);
 
         User::factory()->roleCustomer()->unverified()->count(10)->create();
         User::factory()->roleDoctor()->unverified()->count(10)->create();
         User::factory()->roleApotekOwner()->unverified()->count(10)->create();
+        ArticlePost::factory()->addComments()->addChildComments()->count(50)->create();
     }
 }

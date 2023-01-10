@@ -22,11 +22,11 @@ class ArticlePostController extends Controller
             $articles = ArticlePost::status('published');
             if (isset($request->search)) {
                 $articles = $articles->where('title', 'like', "%$request->search%")->orWhere('body', 'like', "%$request->search%");
-                $nextPageUrl .= '&search='.$request->search;
+                $nextPageUrl .= '&search='.urlencode($request->search);
             }
             if (isset($request->category)) {
                 $articles = $articles->category($request->category);
-                $nextPageUrl .= '&category='.$request->category;
+                $nextPageUrl .= '&category='.urlencode($request->category);
             }
             $articles = $articles->latest()->simplePaginate(10);
 
@@ -43,12 +43,12 @@ class ArticlePostController extends Controller
                     'title' => $article->title,
                     'thumbnail' => $article->thumbnail,
                     'desc' => Str::words(strip_tags($article->body), 10),
-                    'category' => ucfirst($article->category->name),
+                    'category' => ucwords($article->category->name),
                     'slug' => $article->slug,
                     'created_at' => date_format($article->created_at, 'd M Y, H:i'),
                     'links' => [
                         'self' => '/article/post/' . $article->slug,
-                        'category' => '/article/post?category='.$article->category->name,
+                        'category' => '/article/post?category='.urlencode($article->category->name),
                     ],
                 ]);
             }
@@ -97,7 +97,7 @@ class ArticlePostController extends Controller
                     'title' => $article->title,
                     'body' => $article->body,
                     'thumbnail' => $article->thumbnail,
-                    'category' => ucfirst($article->category->name),
+                    'category' => ucwords($article->category->name),
                     'created_at' => date_format($article->created_at, 'd M Y, H:i'),
                     'article_like_count' => $article->like()->count(),
                     'user' => [
