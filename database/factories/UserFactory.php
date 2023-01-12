@@ -112,7 +112,6 @@ class UserFactory extends Factory
                 'ktp' => 'images/default/default_photo_profile.png',
                 'npwp' => 'images/default/default_photo_profile.png',
                 'surat_izin_usaha' => 'images/default/default_photo_profile.png',
-                'image' => 'images/default/default_photo_profile.png',
                 'latitude' => $this->faker->latitude(-7, -6.9),
                 'longitude' => $this->faker->longitude(110.4, 110.6),
                 'status' => $status[rand(0, 2)],

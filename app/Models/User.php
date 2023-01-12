@@ -149,7 +149,7 @@ class User extends Authenticatable implements MustVerifyEmail
             );
             $this->attributes['photo'] = $filePath;
         } else {
-            return $this->attributes['photo'] = null;
+            $this->attributes['photo'] = null;
         }
     }
 

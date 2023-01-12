@@ -21,7 +21,7 @@ class CreateApotekInfoTable extends Migration
             $table->string('ktp');
             $table->string('npwp');
             $table->string('surat_izin_usaha');
-            $table->string('image');
+            $table->text('image')->nullable();
             $table->double('latitude');
             $table->double('longitude');
             $table->timestamps();

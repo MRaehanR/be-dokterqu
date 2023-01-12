@@ -173,7 +173,8 @@ class AuthController extends Controller
                             'ktp' => 'required|mimes:jpg,png,jpeg,bmp|max:2048',
                             'npwp' => 'required|mimes:jpg,png,jpeg,bmp|max:2048',
                             'surat_izin_usaha' => 'required|mimes:jpg,png,jpeg,bmp|max:2048',
-                            'image' => 'required|mimes:jpg,png,jpeg,bmp|max:2048',
+                            'image.*' => 'required|mimes:jpg,png,jpeg,bmp,webp|max:5000',
+                            'image' => 'max:5',
                             'latitude' => 'required',
                             'longitude' => 'required',
                         ]
@@ -195,7 +196,7 @@ class AuthController extends Controller
                         'ktp' => $this->storeImage($request->file('ktp'), 'ktp'),
                         'npwp' => $this->storeImage($request->file('npwp'), 'npwp'),
                         'surat_izin_usaha' => $this->storeImage($request->file('surat_izin_usaha'), 'surat_izin_usaha'),
-                        'image' => $this->storeImage($request->file('image'), 'apotek_image'),
+                        'image' => $request->file('image'),
                         'latitude' => $request->latitude,
                         'longitude' => $request->longitude,
                     ]);
