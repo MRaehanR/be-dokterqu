@@ -97,16 +97,17 @@
                         <div role="tabpanel" class="tab-pane" id="tab_accepted">
                             <div class="row">
                                 <div class="col-md-12 bold-labels" style="width:100%">
-                                    <table id="accepted_apotek_verification_table" class="bg-white table table-striped border-xs mt-2"
-                                        style="width:100%" cellspacing="0">
+                                    <table id="accepted_apotek_verification_table"
+                                        class="bg-white table table-striped border-xs mt-2" style="width:100%"
+                                        cellspacing="0">
                                         <thead>
-                                          <tr>
-                                              <th>User</th>
-                                              <th>Status</th>
-                                              <th>Apotek</th>
-                                              <th>Requested At</th>
-                                              <th>Actions</th>
-                                          </tr>
+                                            <tr>
+                                                <th>User</th>
+                                                <th>Status</th>
+                                                <th>Apotek</th>
+                                                <th>Requested At</th>
+                                                <th>Actions</th>
+                                            </tr>
                                         </thead>
                                     </table>
 
@@ -123,16 +124,17 @@
                         <div role="tabpanel" class="tab-pane" id="tab_rejected">
                             <div class="row">
                                 <div class="col-md-12 bold-labels" style="width:100%">
-                                    <table id="rejected_apotek_verification_table" class="bg-white table table-striped border-xs mt-2"
-                                        style="width:100%" cellspacing="0">
+                                    <table id="rejected_apotek_verification_table"
+                                        class="bg-white table table-striped border-xs mt-2" style="width:100%"
+                                        cellspacing="0">
                                         <thead>
-                                          <tr>
-                                              <th>User</th>
-                                              <th>Status</th>
-                                              <th>Apotek</th>
-                                              <th>Requested At</th>
-                                              <th>Actions</th>
-                                          </tr>
+                                            <tr>
+                                                <th>User</th>
+                                                <th>Status</th>
+                                                <th>Apotek</th>
+                                                <th>Requested At</th>
+                                                <th>Actions</th>
+                                            </tr>
                                         </thead>
                                     </table>
 
@@ -220,10 +222,25 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row text-center mt-1 mb-1">
-                        <div class="col">
-                            <div><b>Apotek Image</b></div>
-                            <img id="detail_image_apotek" width="25%" height="auto">
+                    <div class="container">
+                        <div class="row text-center mt-1 mb-1">
+                            <div class="col">
+                                <div><b>Apotek Image</b></div>
+                                <div id="carouselExampleControls" class="carousel slide w-50" data-ride="carousel">
+                                    <div class="carousel-inner image-apotek-carousel">
+                                    </div>
+                                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button"
+                                        data-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="carousel-control-next" href="#carouselExampleControls" role="button"
+                                        data-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row text-center mt-5">
@@ -249,15 +266,8 @@
                     <div class="row text-center mt-5">
                         <div class="col">
                             <div><b>Apotek Location</b></div>
-                            <iframe
-                                id="detail_maps"
-                                width="50%"
-                                height="500"
-                                frameborder="0"
-                                scrolling="no"
-                                marginheight="0"
-                                marginwidth="0"
-                            >
+                            <iframe id="detail_maps" width="50%" height="500" frameborder="0" scrolling="no"
+                                marginheight="0" marginwidth="0">
                             </iframe>
                         </div>
                     </div>
@@ -294,38 +304,51 @@
         const url = "{{ backpack_url() }}";
 
         function detailModal() {
-          $('.btn_detail').on('click', function() {
-            // User 
-            $('#detail_name').html($(this).data('name'));
-            $('#detail_email').html($(this).data('email'));
-            $('#detail_phone').html($(this).data('phone'));
-            $('#detail_gender').html($(this).data('gender'));
+            $('.btn_detail').on('click', function(e) {
+                e.stopImmediatePropagation();
+                // User 
+                $('#detail_name').html($(this).data('name'));
+                $('#detail_email').html($(this).data('email'));
+                $('#detail_phone').html($(this).data('phone'));
+                $('#detail_gender').html($(this).data('gender'));
 
-            // Apotek Info
-            $('#detail_name_apotek').html($(this).data('name_apotek'));
-            $('#detail_address').html($(this).data('address'));
-            $('#detail_latitude').html($(this).data('latitude'));
-            $('#detail_longitude').html($(this).data('longitude'));
+                // Apotek Info
+                $('#detail_name_apotek').html($(this).data('name_apotek'));
+                $('#detail_address').html($(this).data('address'));
+                $('#detail_latitude').html($(this).data('latitude'));
+                $('#detail_longitude').html($(this).data('longitude'));
 
 
-            // Images
-            $('#detail_image_apotek').attr('src', $(this).data('image_apotek'));
-            $('#detail_photo_profile').attr('src', $(this).data('photo'));
-            $('#detail_ktp').attr('src', $(this).data('ktp'));
-            $('#detail_npwp').attr('src', $(this).data('npwp'));
-            $('#detail_surat_izin_usaha').attr('src', $(this).data('surat_izin_usaha'));
+                // Images
+                // $('#detail_image_apotek').attr('src', $(this).data('image_apotek'));
+                let imageApotek = $(this).data('image_apotek').split(',');
+                $('#detail_photo_profile').attr('src', $(this).data('photo'));
+                $('#detail_ktp').attr('src', $(this).data('ktp'));
+                $('#detail_npwp').attr('src', $(this).data('npwp'));
+                $('#detail_surat_izin_usaha').attr('src', $(this).data('surat_izin_usaha'));
 
-            // Maps
-            let latitude = $(this).data('latitude');
-            let longitude = $(this).data('longitude');
+                $('.image-apotek-carousel').empty();
+                for (let i = 0; i < imageApotek.length; i++) {
+                    let active = (i == 0) ? "active" : '';
+                    let html = `
+                            <div class="carousel-item ${active}">
+                                <img class="d-block w-100" src="${imageApotek[i]}">
+                            </div>
+                        `;
+                    $('.image-apotek-carousel').append(html);
+                    console.log('image', imageApotek[i]);
+                }
 
-            console.log('latitude: ', latitude);
-            console.log('longitude: ', longitude);
+                // Maps
+                let latitude = $(this).data('latitude');
+                let longitude = $(this).data('longitude');
 
-            $('#detail_maps').attr('src', `https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d1510.345323556068!2d${longitude}!3d${latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sid!4v1671536568574!5m2!1sen!2sid`);
+                $('#detail_maps').attr('src',
+                    `https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d1510.345323556068!2d${longitude}!3d${latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sid!4v1671536568574!5m2!1sen!2sid`
+                );
 
-            $('#detail_modal').modal('show');
-          });
+                $('#detail_modal').modal('show');
+            });
         }
 
         function acceptEntry() {
@@ -369,7 +392,7 @@
                                 closeOnClickOutside: false,
                                 timer: 2000,
                             }).then(() => {
-                              $( "#accepted" ).find('a').trigger( "click" );
+                                $("#accepted").find('a').trigger("click");
                             });
                         },
                         error: function(result) {
@@ -387,8 +410,8 @@
         }
 
         function rejectEntry() {
-           let id = $('.btn_reject').data('id');
-           let userId = $('.btn_reject').data('user_id');
+            let id = $('.btn_reject').data('id');
+            let userId = $('.btn_reject').data('user_id');
             swal({
                 title: "Reject apotek Info?",
                 text: "Are you sure? This action can't be undone",
@@ -427,7 +450,7 @@
                                 closeOnClickOutside: false,
                                 timer: 2000,
                             }).then(() => {
-                              $( "#rejected" ).find('a').trigger( "click" );
+                                $("#rejected").find('a').trigger("click");
                             });
                         },
                         error: function(result) {

@@ -76,7 +76,6 @@ class UserSeeder extends Seeder
             'ktp' => 'images/default/default_photo_profile.png',
             'npwp' => 'images/default/default_photo_profile.png',
             'surat_izin_usaha' => 'images/default/default_photo_profile.png',
-            'image' => 'images/default/default_photo_profile.png',
             'latitude' => '-6.753476617844531',
             'longitude' => '110.84284069735776',
             'status' => 'accepted',
