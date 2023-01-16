@@ -6,6 +6,7 @@ use App\Http\Controllers\Articles\ArticleCommentController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\User\CustomerAddressController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -54,5 +55,11 @@ Route::prefix('article')->group(function() {
 
     Route::prefix('category')->group(function() {
         Route::get('/', [ArticleCategoryController::class, 'getAllCategory']);
+    });
+});
+
+Route::prefix('user')->group(function() {
+    Route::prefix('customer')->group(function() {
+        Route::post('/address', [CustomerAddressController::class, 'setAddress'])->middleware('auth:sanctum');
     });
 });

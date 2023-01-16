@@ -11,6 +11,7 @@ class CustomerAddress extends Model
 
     protected $table = 'customer_addresses';
     protected $fillable = [
+        'user_id',
         'label',
         'address',
         'note',
@@ -18,6 +19,10 @@ class CustomerAddress extends Model
         'phone',
         'latitude',
         'longitude',
+        'default',
+    ];
+    protected $casts = [
+        'default' => 'boolean',
     ];
 
 
