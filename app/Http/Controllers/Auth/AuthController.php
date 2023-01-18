@@ -249,4 +249,67 @@ class AuthController extends Controller
         }
         return null;
     }
+
+    public function formRegisterCustomer()
+    {
+        try {
+            return response()->json([
+                [
+                    'label' => 'Name',
+                    'name' => 'name',
+                    'type' => 'text',
+                    'required' => true,
+                ],
+                [
+                    'label' => 'Email',
+                    'name' => 'email',
+                    'type' => 'email',
+                    'required' => true,
+                ],
+                [
+                    'label' => 'Password',
+                    'name' => 'password',
+                    'type' => 'password',
+                    'required' => true,
+                ],
+                [
+                    'label' => 'Confirmation Password',
+                    'name' => 'password_confirmation',
+                    'type' => 'password',
+                    'required' => true,
+                ],
+                [
+                    'label' => 'Phone',
+                    'name' => 'phone',
+                    'type' => 'phone',
+                    'required' => true,
+                ],
+                [
+                    'label' => 'Photo Profile',
+                    'name' => 'photo',
+                    'type' => 'file',
+                    'required' => true,
+                ],
+                [
+                    'label' => 'Gender',
+                    'name' => 'gender',
+                    'type' => 'file',
+                    'required' => false,
+                ],
+                [
+                    'label' => 'Role',
+                    'name' => 'role',
+                    'type' => 'hidden',
+                    'required' => true,
+                    'value' => 3
+                ],
+            ]);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

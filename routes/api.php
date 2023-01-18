@@ -63,3 +63,7 @@ Route::prefix('user')->group(function() {
         Route::post('/address', [CustomerAddressController::class, 'setAddress'])->middleware('auth:sanctum');
     });
 });
+
+Route::prefix('form')->group(function() {
+    Route::get('/register/customer', [AuthController::class, 'formRegisterCustomer']);
+});
