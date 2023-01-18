@@ -288,13 +288,23 @@ class AuthController extends Controller
                     'label' => 'Photo Profile',
                     'name' => 'photo',
                     'type' => 'file',
-                    'required' => true,
+                    'required' => false,
                 ],
                 [
                     'label' => 'Gender',
                     'name' => 'gender',
-                    'type' => 'file',
-                    'required' => false,
+                    'type' => 'select',
+                    'required' => true,
+                    'options' => [
+                        [
+                            'label' => 'Male',
+                            'value' => 'm',
+                        ],
+                        [
+                            'label' => 'Female',
+                            'value' => 'f',
+                        ],
+                    ]
                 ],
                 [
                     'label' => 'Role',
