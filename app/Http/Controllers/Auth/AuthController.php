@@ -259,12 +259,14 @@ class AuthController extends Controller
                     'name' => 'name',
                     'type' => 'text',
                     'required' => true,
+                    'prepend_inner_icon' => 'mdi-account-circle',
                 ],
                 [
                     'label' => 'Email',
                     'name' => 'email',
                     'type' => 'email',
                     'required' => true,
+                    'prepend_inner_icon' => 'mdi-email',
                 ],
                 [
                     'label' => 'Password',
@@ -283,6 +285,7 @@ class AuthController extends Controller
                     'name' => 'phone',
                     'type' => 'phone',
                     'required' => true,
+                    'prepend_inner_icon' => 'mdi-phone',
                 ],
                 [
                     'label' => 'Photo Profile',
