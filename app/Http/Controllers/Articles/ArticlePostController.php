@@ -22,13 +22,21 @@ class ArticlePostController extends Controller
             $articles = ArticlePost::status('published');
             if (isset($request->search)) {
                 $articles = $articles->where('title', 'like', "%$request->search%")->orWhere('body', 'like', "%$request->search%");
-                $nextPageUrl .= '&search='.urlencode($request->search);
+                $nextPageUrl .= '&search=' . urlencode($request->search);
             }
             if (isset($request->category)) {
                 $articles = $articles->category($request->category);
-                $nextPageUrl .= '&category='.urlencode($request->category);
+                $nextPageUrl .= '&category=' . urlencode($request->category);
             }
-            $articles = $articles->latest()->simplePaginate(10);
+            if ($request->type == 'latest') {
+                $article = $articles->latest();
+                $nextPageUrl .= '&type=' . urlencode($request->type);
+            }
+            if ($request->type == 'popular') {
+                $article = $articles->withCount('like')->orderBy('like_count', 'DESC');
+                $nextPageUrl .= '&type=' . urlencode($request->type);
+            }
+            $articles = $articles->simplePaginate(10);
 
             if (count($articles) === 0) {
                 return response()->json([
@@ -48,7 +56,7 @@ class ArticlePostController extends Controller
                     'created_at' => date_format($article->created_at, 'd M Y, H:i'),
                     'links' => [
                         'self' => '/article/post/' . $article->slug,
-                        'category' => '/article/post?category='.urlencode($article->category->name),
+                        'category' => '/article/post?category=' . urlencode($article->category->name),
                     ],
                 ]);
             }
@@ -58,7 +66,7 @@ class ArticlePostController extends Controller
                 'message' => 'Get all article success',
                 'data' => [
                     'current' => $articles->currentPage(),
-                    'next_page' => (isset($nextPageUrl) && $articles->nextPageUrl()) ? $articles->nextPageUrl().$nextPageUrl : $articles->nextPageUrl(),
+                    'next_page' => (isset($nextPageUrl) && $articles->nextPageUrl()) ? $articles->nextPageUrl() . $nextPageUrl : $articles->nextPageUrl(),
                     'articles' => $data,
                 ],
             ], Response::HTTP_OK);
@@ -85,7 +93,7 @@ class ArticlePostController extends Controller
                 ], Response::HTTP_NOT_FOUND);
             }
 
-            if(Auth('sanctum')->user()){
+            if (Auth('sanctum')->user()) {
                 $isLiked = ArticleLike::where('article_post_id', $article->id)->where('user_id', Auth('sanctum')->user()->id)->first();
                 $isLiked = isset($isLiked);
             }
@@ -104,8 +112,8 @@ class ArticlePostController extends Controller
                         'isLiked' => $isLiked,
                     ],
                     'links' => [
-                        'comment' => '/article/comment/'.$article->id,
-                        'like' => '/article/post/'.$article->id.'/like',
+                        'comment' => '/article/comment/' . $article->id,
+                        'like' => '/article/post/' . $article->id . '/like',
                     ]
                 ],
             ], Response::HTTP_OK);
@@ -122,17 +130,17 @@ class ArticlePostController extends Controller
     {
         try {
             $articleLike = ArticleLike::where('user_id', Auth::user()->id)->where('article_post_id', $articlePostId)->first();
-            if(!$articleLike){
+            if (!$articleLike) {
                 $articleLike = ArticleLike::create([
                     'user_id' => Auth::user()->id,
                     'article_post_id' => $articlePostId,
                 ]);
-    
+
                 return response()->json([
                     'status' => true,
                     'message' => 'Set article like success',
                     'data' => $articleLike,
-                ], Response::HTTP_OK);  
+                ], Response::HTTP_OK);
             }
             $articleLike->delete();
 
