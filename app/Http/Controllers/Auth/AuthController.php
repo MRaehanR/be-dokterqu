@@ -89,9 +89,9 @@ class AuthController extends Controller
                 [
                     'name' => 'required|min:5',
                     'email' => 'required|email|unique:users',
-                    'password' => 'required|confirmed',
+                    'password' => 'required|min:8|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\X])(?=.*[!$#%]).*$/|confirmed',
                     'photo' => 'mimes:jpg,png,jpeg,bmp|max:2048',
-                    'phone' => 'required|unique:users',
+                    'phone' => 'required|unique:users|max:15',
                     'gender' => 'required|in:m,f',
                     'role' => 'required',
                 ]
@@ -168,6 +168,8 @@ class AuthController extends Controller
                     $validator = Validator::make(
                         $request->all(),
                         [
+                            'province_id' => 'required',
+                            'city_id' => 'required',
                             'name' => 'required|min:5',
                             'address' => 'required',
                             'ktp' => 'required|mimes:jpg,png,jpeg,bmp|max:2048',
@@ -191,6 +193,8 @@ class AuthController extends Controller
                     $user->save();
                     $apotekInfo = ApotekInfo::create([
                         'user_id' => $user->id,
+                        'province_id' => $request->province_id,
+                        'city_id' => $request->city_id,
                         'name' => $request->name,
                         'address' => $request->address,
                         'ktp' => $this->storeImage($request->file('ktp'), 'ktp'),

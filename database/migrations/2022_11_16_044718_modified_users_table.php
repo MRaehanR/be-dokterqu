@@ -15,7 +15,7 @@ class ModifiedUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('photo')->after('remember_token')->nullable();
-            $table->string('phone')->after('photo');
+            $table->string('phone', 15)->after('photo');
         });
     }
 

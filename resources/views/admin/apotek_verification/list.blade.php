@@ -212,11 +212,11 @@
                                         <div class="col-md-4"><label>Address</label></div>
                                         <div class="col-md-8"><label id="detail_address"></label></div>
 
-                                        <div class="col-md-4"><label>Latitude</label></div>
-                                        <div class="col-md-8"><label id="detail_latitude"></label></div>
+                                        <div class="col-md-4"><label>Province</label></div>
+                                        <div class="col-md-8"><label id="detail_province"></label></div>
 
-                                        <div class="col-md-4"><label>Longitude</label></div>
-                                        <div class="col-md-8"><label id="detail_longitude"></label></div>
+                                        <div class="col-md-4"><label>City</label></div>
+                                        <div class="col-md-8"><label id="detail_city"></label></div>
                                     </div>
                                 </div>
                             </div>
@@ -226,19 +226,22 @@
                         <div class="row text-center mt-1 mb-1">
                             <div class="col">
                                 <div><b>Apotek Image</b></div>
-                                <div id="carouselExampleControls" class="carousel slide w-50" data-ride="carousel">
-                                    <div class="carousel-inner image-apotek-carousel">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div id="carouselExampleControls" class="carousel slide w-50"
+                                        data-ride="carousel">
+                                        <div class="carousel-inner image-apotek-carousel">
+                                        </div>
+                                        <a class="carousel-control-prev" href="#carouselExampleControls"
+                                            role="button" data-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                        <a class="carousel-control-next" href="#carouselExampleControls"
+                                            role="button" data-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="sr-only">Next</span>
+                                        </a>
                                     </div>
-                                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button"
-                                        data-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="sr-only">Previous</span>
-                                    </a>
-                                    <a class="carousel-control-next" href="#carouselExampleControls" role="button"
-                                        data-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="sr-only">Next</span>
-                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -315,8 +318,8 @@
                 // Apotek Info
                 $('#detail_name_apotek').html($(this).data('name_apotek'));
                 $('#detail_address').html($(this).data('address'));
-                $('#detail_latitude').html($(this).data('latitude'));
-                $('#detail_longitude').html($(this).data('longitude'));
+                $('#detail_province').html($(this).data('province'));
+                $('#detail_city').html($(this).data('city'));
 
 
                 // Images
