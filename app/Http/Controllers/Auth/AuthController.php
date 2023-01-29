@@ -89,7 +89,7 @@ class AuthController extends Controller
                 [
                     'name' => 'required|min:5',
                     'email' => 'required|email|unique:users',
-                    'password' => 'required|min:8|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\X])(?=.*[!$#%]).*$/|confirmed',
+                    'password' => 'required|min:8|confirmed',
                     'photo' => 'mimes:jpg,png,jpeg,bmp|max:2048',
                     'phone' => 'required|unique:users|max:15',
                     'gender' => 'required|in:m,f',
