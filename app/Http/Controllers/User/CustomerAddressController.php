@@ -94,7 +94,7 @@ class CustomerAddressController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'No data found',
-                    'data' => $addresses,
+                    'data' => null,
                 ], Response::HTTP_NOT_FOUND);
             }
 

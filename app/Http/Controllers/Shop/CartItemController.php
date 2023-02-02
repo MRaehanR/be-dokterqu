@@ -21,6 +21,7 @@ class CartItemController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'No data found',
+                    'data' => null,
                 ], Response::HTTP_NOT_FOUND);
             }
 
