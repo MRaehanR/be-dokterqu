@@ -72,7 +72,7 @@ Route::prefix('user')->group(function() {
 Route::prefix('shop')->group(function() {
     Route::get('/products', [ProductController::class, 'getAllProducts']);
     Route::get('/product/{slug}', [ProductController::class, 'getProductBySlug']);
-    // Route::get('/get-available-apotek', [ProductController::class, 'getApotekHasProducts']);
+    Route::post('/get-midtrans-snap-token', [ProductController::class, 'getMidtransSnapToken'])->middleware('auth:sanctum');
 
     Route::get('/category', [ProductCategoryController::class, 'getAllCategory']);
 

@@ -49,6 +49,11 @@ class ApotekInfo extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function apotekStock()
+    {
+        return $this->hasMany(ApotekStock::class);
+    }
+
 
     /*
     |--------------------------------------------------------------------------

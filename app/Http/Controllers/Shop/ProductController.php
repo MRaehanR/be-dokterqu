@@ -6,10 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\ApotekInfo;
 use App\Models\ApotekStock;
 use App\Models\CartItem;
+use App\Models\CustomerAddress;
 use App\Models\Product;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -119,5 +124,122 @@ class ProductController extends Controller
                 'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public function getMidtransSnapToken(Request $request)
+    {
+        \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        \Midtrans\Config::$isProduction = false;
+        \Midtrans\Config::$isSanitized = true;
+        \Midtrans\Config::$is3ds = true;
+
+        try {
+            $params = [
+                'transaction_details' => [
+                    'order_id' => '',
+                    'gross_amount' => 0,
+                ],
+                'item_details' => [],
+                'customer_details' => [],
+                'enabled_payments' => [
+                    'gopay',
+                    'shopeepay',
+                    'bca_va',
+                ],
+            ];
+
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'products' => 'required',
+                    'address_id' => 'required',
+                    'voucher_id' => 'nullable',
+                    'apotek_id' => 'required',
+                ]
+            );
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validator->errors()
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            $user = User::where('id', Auth::user()->id)->first();
+            $userAddress = CustomerAddress::where('id', $request->address_id)->first();
+
+            $params['transaction_details']['order_id'] = 'INV_'.Carbon::now()->format('YmdHis').'_'.$user->id;
+            $params['customer_details'] = [
+                'first_name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'billing_address' => [
+                    'first_name' => $user->name,
+                    'email' => $user->email,
+                    'phone' => $user->phone,
+                    'address' => $userAddress->address,
+                ],
+                'shipping_address' => [
+                    'first_name' => $userAddress->recipient,
+                    'phone' => $userAddress->phone,
+                    'address' => $userAddress->address,
+                    'city' => ucwords(strtolower($userAddress->city_name . ', ' . $userAddress->province_name)),
+                ],
+            ];
+
+
+            foreach ($request->products as $productReq) {
+                $apotekStock = ApotekStock::where('apotek_info_id', $request->apotek_id)
+                    ->where('product_id', $productReq['product_id'])
+                    ->first();
+
+                $params['transaction_details']['gross_amount'] += (integer) $apotekStock->price;
+
+                array_push($params['item_details'], [
+                    'id' => $this->getFirstChar($apotekStock->apotekInfo->name).'-'.$apotekStock->id,
+                    'price' => (integer) $apotekStock->price,
+                    'quantity' => $productReq['quantity'],
+                    'name' => $apotekStock->product->name,
+                ]);
+            }
+
+
+            $params['transaction_details']['gross_amount'] += 2000;
+            array_push($params['item_details'], [
+                'id' => 'FEE-01',
+                'price' => 2000,
+                'quantity' => 1,
+                'name' => 'Application Fee',
+            ]);
+
+            $snapToken = [
+                'token' => \Midtrans\Snap::getSnapToken($params),
+                'url' => \Midtrans\Snap::getSnapUrl($params),
+            ];
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Generate midtrans snap token success',
+                'data' => $snapToken,
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private function getFirstChar($word)
+    {
+        $words = preg_split("/[\s,_-]+/", $word);
+        $acronym = '';
+        foreach ($words as $word) {
+            $acronym .= mb_substr($word, 0, 1);
+        }
+
+        return $acronym;
     }
 }

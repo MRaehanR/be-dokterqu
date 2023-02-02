@@ -36,6 +36,11 @@ class ApotekStock extends Model
         return $this->belongsTo(Product::class);
     }
 
+    public function apotekInfo()
+    {
+        return $this->belongsTo(ApotekInfo::class);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES
