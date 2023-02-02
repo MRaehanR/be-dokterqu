@@ -65,6 +65,7 @@ Route::prefix('article')->group(function() {
 Route::prefix('user')->group(function() {
     Route::prefix('customer')->group(function() {
         Route::post('/address', [CustomerAddressController::class, 'setAddress'])->middleware('auth:sanctum');
+        Route::get('/address', [CustomerAddressController::class, 'getAddresses'])->middleware('auth:sanctum');
     });
 });
 
