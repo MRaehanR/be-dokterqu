@@ -49,7 +49,7 @@ class ProductController extends Controller
                 if (isset(Auth('sanctum')->user()->id)) $cartItem = CartItem::where('user_id', Auth('sanctum')->user()->id)->where('product_id', $product->id)->first();
                 array_push($data, [
                     'name' => ucwords($product->name),
-                    'image' => $product->image,
+                    'image' => $product->images,
                     'category' => ucwords($product->category->name),
                     'price' => $product->range_price,
                     'user' => [
