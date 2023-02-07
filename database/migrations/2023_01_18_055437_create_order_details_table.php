@@ -14,11 +14,11 @@ class CreateOrderDetailsTable extends Migration
     public function up()
     {
         Schema::create('order_details', function (Blueprint $table) {
-            $table->id();
+            $table->string('id')->primary();
             $table->foreignId('user_id')->constrained()->cascadeOnUpdate();
             $table->foreignId('voucher_id')->nullable()->constrained()->cascadeOnUpdate();
             $table->decimal('order_amount', 13);
-            $table->decimal('shipping_costs', 13);
+            $table->decimal('shipping_costs', 13)->nullable();
             $table->timestamps();
         });
     }

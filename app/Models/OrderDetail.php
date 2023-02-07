@@ -16,7 +16,7 @@ class OrderDetail extends Model
     */
 
     protected $table = 'order_details';
-    protected $guarded = ['id'];
+    protected $guarded = [];
 
 
     /*

@@ -5,14 +5,19 @@ namespace App\Http\Controllers\Shop;
 use App\Http\Controllers\Controller;
 use App\Models\ApotekInfo;
 use App\Models\ApotekStock;
+use App\Models\ApotekStockTransaction;
 use App\Models\CartItem;
 use App\Models\CustomerAddress;
+use App\Models\OrderDetail;
+use App\Models\OrderItem;
+use App\Models\OrderPayment;
 use App\Models\Product;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -130,8 +135,6 @@ class ProductController extends Controller
     {
         \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
         \Midtrans\Config::$isProduction = false;
-        \Midtrans\Config::$isSanitized = true;
-        \Midtrans\Config::$is3ds = true;
 
         try {
             $params = [
@@ -154,7 +157,6 @@ class ProductController extends Controller
                     'products' => 'required',
                     'address_id' => 'required',
                     'voucher_id' => 'nullable',
-                    'apotek_id' => 'required',
                 ]
             );
 
@@ -169,7 +171,15 @@ class ProductController extends Controller
             $user = User::where('id', Auth::user()->id)->first();
             $userAddress = CustomerAddress::where('id', $request->address_id)->first();
 
-            $params['transaction_details']['order_id'] = 'INV_'.Carbon::now()->format('YmdHis').'_'.$user->id;
+
+            if (!$userAddress) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'User Address Not Found',
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            $params['transaction_details']['order_id'] = 'INV_' . Carbon::now()->format('YmdHis') . '_' . $user->id;
             $params['customer_details'] = [
                 'first_name' => $user->name,
                 'email' => $user->email,
@@ -190,17 +200,15 @@ class ProductController extends Controller
 
 
             foreach ($request->products as $productReq) {
-                $apotekStock = ApotekStock::where('apotek_info_id', $request->apotek_id)
-                    ->where('product_id', $productReq['product_id'])
-                    ->first();
+                $apotekStock = ApotekStock::where('id', $productReq['apotek_stock_id'])->first();
 
-                $params['transaction_details']['gross_amount'] += (integer) $apotekStock->price;
+                $params['transaction_details']['gross_amount'] += (int) $apotekStock->price * (int) $productReq['quantity'];
 
                 array_push($params['item_details'], [
-                    'id' => $this->getFirstChar($apotekStock->apotekInfo->name).'-'.$apotekStock->id,
-                    'price' => (integer) $apotekStock->price,
+                    'id' => $this->getFirstChar($apotekStock->apotekInfo->name) . '-' . $apotekStock->id,
+                    'price' => (int) $apotekStock->price,
                     'quantity' => $productReq['quantity'],
-                    'name' => $apotekStock->product->name,
+                    'name' => substr($apotekStock->product->name, 0, 50),
                 ]);
             }
 
@@ -222,6 +230,105 @@ class ProductController extends Controller
                 'status' => true,
                 'message' => 'Generate midtrans snap token success',
                 'data' => $snapToken,
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function setCheckoutProduct(Request $request)
+    {
+        try {
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'products' => 'required',
+                    'order_id' => 'required',
+                    'gross_amount' => 'required',
+                    'transaction_id' => 'required',
+                    'voucher_id' => 'nullable',
+                    'shipping_costs' => 'nullable',
+                ]
+            );
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validator->errors()
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            // Order Details
+            $orderDetail = new OrderDetail([
+                'id' => $request->order_id,
+                'user_id' => Auth::user()->id,
+                'order_amount' => $request->gross_amount,
+            ]);
+
+            if (isset($request->voucher_id)) {
+                $orderDetail['voucher_id'] = $request->voucher_id;
+            }
+
+            if (isset($request->shipping_costs)) {
+                $orderDetail['shipping_costs'] = $request->shipping_costs;
+            }
+            $orderDetail->save();
+
+            // Order Items
+            $orderItem = [];
+            $stockTransaction = [];
+
+            foreach ($request->products as $product) {
+                array_push($orderItem, [
+                    'order_detail_id' => $request->order_id,
+                    'apotek_stock_id' => $product['apotek_stock_id'],
+                    'quantity' => $product['quantity'],
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+
+                array_push($stockTransaction, [
+                    'apotek_stock_id' => $product['apotek_stock_id'],
+                    'type' => 'out',
+                    'quantity' => $product['quantity'],
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+
+                $apotekStock = ApotekStock::where('id', $product['apotek_stock_id'])->first();
+                $apotekStock->update([
+                    'quantity' => $apotekStock->quantity - $product['quantity'],
+                ]);
+            }
+            
+            DB::table('order_items')->insert($orderItem);
+            
+            // Stock Transactions
+            DB::table('apotek_stock_transactions')->insert($stockTransaction);
+
+            // Order Payments
+            $orderPayment = new OrderPayment([
+                'order_detail_id' => $request->order_id,
+                'transaction_id' => $request->transaction_id,
+                'status' => $request->transaction_status,
+                'payment_type' => $request->payment_type,
+                'payment_amount' => $request->gross_amount,
+                'json_data' => json_encode($request->all()),
+            ]);
+
+            if ($request->transaction_status == 'settlement') {
+                $orderPayment->settlement_time = $request->transaction_time;
+            }
+            $orderPayment->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Set checkout product success',
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());

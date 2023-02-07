@@ -15,14 +15,16 @@ class CreateOrderPaymentsTable extends Migration
     {
         Schema::create('order_payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_detail_id')->constrained()->cascadeOnUpdate();
+            $table->string('order_detail_id');
             $table->string('transaction_id');
             $table->string('status');
             $table->string('payment_type');
             $table->decimal('payment_amount', 13);
-            $table->timestamp('settlement_time');
+            $table->timestamp('settlement_time')->nullable();
             $table->text('json_data');
             $table->timestamps();
+
+            $table->foreign('order_detail_id')->references('id')->on('order_details')->cascadeOnUpdate();
         });
     }
 
