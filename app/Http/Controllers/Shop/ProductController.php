@@ -179,7 +179,7 @@ class ProductController extends Controller
                 ], Response::HTTP_NOT_FOUND);
             }
 
-            $params['transaction_details']['order_id'] = 'INV_' . Carbon::now()->format('YmdHis') . '_' . $user->id;
+            $params['transaction_details']['order_id'] = 'SHOP_' . Carbon::now()->format('YmdHis') . '_' . $user->id;
             $params['customer_details'] = [
                 'first_name' => $user->name,
                 'email' => $user->email,
