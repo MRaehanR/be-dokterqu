@@ -18,6 +18,7 @@ class CreateOrderPaymentsTable extends Migration
             $table->string('order_detail_id');
             $table->string('transaction_id');
             $table->string('status');
+            $table->string('status_code');
             $table->string('payment_type');
             $table->decimal('payment_amount', 13);
             $table->timestamp('settlement_time')->nullable();
