@@ -316,6 +316,7 @@ class ProductController extends Controller
                 'order_detail_id' => $request->order_id,
                 'transaction_id' => $request->transaction_id,
                 'status' => $request->transaction_status,
+                'status_code' => $request->status_code,
                 'payment_type' => $request->payment_type,
                 'payment_amount' => $request->gross_amount,
                 'json_data' => json_encode($request->all()),
