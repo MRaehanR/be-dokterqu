@@ -82,4 +82,7 @@ Route::prefix('shop')->group(function() {
     Route::post('/cart/remove', [CartItemController::class, 'removeCartItem'])->middleware('auth:sanctum');
     Route::post('/cart/update', [CartItemController::class, 'updateCartItem'])->middleware('auth:sanctum');
 });
-// Route::get('/midtrans', [MidtransController::class, 'coba']);
+
+Route::prefix('midtrans')->group(function() {
+    Route::post('/notification-handler', [MidtransController::class, 'notificationHandler']);
+});
