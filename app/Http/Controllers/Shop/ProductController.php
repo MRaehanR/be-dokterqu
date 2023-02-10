@@ -194,7 +194,7 @@ class ProductController extends Controller
                     'first_name' => $userAddress->recipient,
                     'phone' => $userAddress->phone,
                     'address' => $userAddress->address,
-                    'city' => ucwords(strtolower($userAddress->city_name . ', ' . $userAddress->province_name)),
+                    'location' => $userAddress->city_name . ', ' . $userAddress->province_name,
                 ],
             ];
 
@@ -305,9 +305,9 @@ class ProductController extends Controller
                     'quantity' => $apotekStock->quantity - $product['quantity'],
                 ]);
             }
-            
+
             DB::table('order_items')->insert($orderItem);
-            
+
             // Stock Transactions
             DB::table('apotek_stock_transactions')->insert($stockTransaction);
 
