@@ -9,6 +9,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use PhpParser\Node\Stmt\TryCatch;
 
 class CustomerAddressController extends Controller
 {
@@ -48,7 +49,7 @@ class CustomerAddressController extends Controller
             ]);
 
             $oldDefaultAddress = CustomerAddress::where('user_id', Auth::user()->id)->where('default', 1)->first();
-            if($request->default == 1 && isset($oldDefaultAddress)) {
+            if ($request->default == 1 && isset($oldDefaultAddress)) {
                 $oldDefaultAddress->update(['default' => 0]);
             }
             $customerAddress->default = $request->default;
@@ -84,13 +85,13 @@ class CustomerAddressController extends Controller
         try {
             $data = [];
 
-            if($request->default) {
-                $addresses = CustomerAddress::where('user_id', Auth::user()->id)->where('default', 1)->get();    
+            if ($request->default) {
+                $addresses = CustomerAddress::where('user_id', Auth::user()->id)->where('default', 1)->get();
             } else {
                 $addresses = CustomerAddress::where('user_id', Auth::user()->id)->get();
             }
 
-            if(count($addresses) === 0) {
+            if (count($addresses) === 0) {
                 return response()->json([
                     'status' => false,
                     'message' => 'No data found',
@@ -119,6 +120,63 @@ class CustomerAddressController extends Controller
                 'message' => 'Get Customer Address Success',
                 'data' => $data,
             ], Response::HTTP_CREATED);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function updateAddress(Request $request, $id)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'label' => 'required|string|max:20',
+                'address' => 'required|string|max:200',
+                'recipient' => 'required|string|max:20',
+                'phone' => 'required|max:15',
+                'latitude' => 'required',
+                'longitude' => 'required',
+                'province_id' => 'required|exists:provinces,prov_id',
+                'city_id' => 'required|exists:cities,city_id',
+                'default' => 'required|boolean',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validator->errors()
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            $customerAddress = CustomerAddress::where('id', $id)->where('user_id', Auth::user()->id)->first();
+
+            if (!$customerAddress) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'User Address Not Found',
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            $customerAddress = $customerAddress->update([
+                'user_id' => Auth::user()->id,
+                'label' => ucwords($request->label),
+                'address' => ucwords($request->address),
+                'recipient' => ucwords($request->recipient),
+                'phone' => $request->phone,
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+                'province_id' => $request->province_id,
+                'city_id' => $request->city_id,
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Update Customer Address Success',
+            ], Response::HTTP_OK);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return response()->json([
