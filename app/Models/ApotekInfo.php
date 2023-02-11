@@ -76,13 +76,13 @@ class ApotekInfo extends Model
     public function getProvinceNameAttribute()
     {
         $province = DB::table('provinces')->where('prov_id', $this->province_id)->first();
-        return $province->prov_name;
+        return ucwords(strtolower($province->prov_name));
     }
 
     public function getCityNameAttribute()
     {
         $province = DB::table('cities')->where('city_id', $this->city_id)->first();
-        return $province->city_name;
+        return ucwords(strtolower($province->city_name));
     }
 
     

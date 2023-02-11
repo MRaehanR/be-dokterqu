@@ -131,6 +131,87 @@ class ProductController extends Controller
         }
     }
 
+    public function getApotekHasProducts(Request $request)
+    {
+        try {
+            $products = $request->products;
+            $userAddress = CustomerAddress::where('id', $request->address_id)->first();
+
+            if (!$userAddress) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'User Address Not Found',
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            $pharmacies = ApotekInfo::query();
+            foreach ($products as $product) {
+                $id = $product['product_id'];
+                $quantity = $product['quantity'];
+                $pharmacies = $pharmacies->whereHas('apotekStock', function ($query) use ($id, $quantity) {
+                    $query->where('product_id', $id)->where('quantity', '>', $quantity);
+                })->status('accepted');
+            }
+            $pharmacies = $pharmacies->get();
+
+            $nearbyPharmacies = [];
+            foreach ($pharmacies as $pharmacy) {
+                $distance = $this->calculateDistance($userAddress->latitude, $pharmacy->latitude, $userAddress->longitude, $pharmacy->longitude);
+                $pharmacy['distance'] = $distance;
+                array_push($nearbyPharmacies, $pharmacy);
+            }
+
+            usort($nearbyPharmacies, function ($a, $b) {
+                return $a->distance <=> $b->distance;
+            });
+            $nearbyPharmacies = $nearbyPharmacies[0];
+
+            $productApotekStockId = [];
+            foreach ($products as $product) {
+                $apotek_stock = ApotekStock::where('apotek_info_id', $nearbyPharmacies->id)->where('product_id', $product['product_id'])->first();
+                $productApotekStockId[] = [
+                    'apotek_stock_id' => $apotek_stock->id,
+                    'quantity' => $product['quantity'],
+                ];
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Get nearby apotek success',
+                'data' => [
+                    'apotek' => [
+                        'name' => $nearbyPharmacies->name,
+                        'address' => $nearbyPharmacies->address,
+                        'image' => $nearbyPharmacies->image[0],
+                        'distance' => round($nearbyPharmacies->distance, 2) . ' km',
+                        'location' => $nearbyPharmacies->city_name . ', ' . $nearbyPharmacies->province_name,
+                    ],
+                    'products' => $productApotekStockId,
+                ],
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private function calculateDistance($lat1, $lat2, $lon1, $lon2)
+    {
+        $earthRadius = 6371;
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat / 2) * sin($dLat / 2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon / 2) * sin($dLon / 2);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+        $distance = $earthRadius * $c;
+
+        return $distance;
+    }
+
     public function getMidtransSnapToken(Request $request)
     {
         \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
