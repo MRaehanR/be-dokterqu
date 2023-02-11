@@ -22,9 +22,14 @@ class CreateCustomerAddressesTable extends Migration
             $table->text('note')->nullable();
             $table->string('recipient', 20);
             $table->string('phone', 15);
+            $table->integer('province_id');
+            $table->integer('city_id');
             $table->double('latitude');
             $table->double('longitude');
             $table->timestamps();
+
+            $table->foreign('province_id')->references('prov_id')->on('provinces')->cascadeOnUpdate();
+            $table->foreign('city_id')->references('city_id')->on('cities')->cascadeOnUpdate();
         });
     }
 

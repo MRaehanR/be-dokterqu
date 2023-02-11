@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\ApotekStock;
 use App\Models\ArticlePost;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -16,6 +18,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
+            ProductCategorySeeder::class,
             RoleAndPermissionSeeder::class,
             DoctorTypeSeeder::class,
             ArticleCategorySeeder::class,
@@ -26,5 +29,6 @@ class DatabaseSeeder extends Seeder
         User::factory()->roleDoctor()->unverified()->count(10)->create();
         User::factory()->roleApotekOwner()->unverified()->count(10)->create();
         ArticlePost::factory()->addComments()->addChildComments()->count(50)->create();
+        Product::factory()->addApotekStocks()->count(10)->create();
     }
 }

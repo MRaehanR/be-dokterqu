@@ -18,7 +18,7 @@ class ImageCast implements CastsAttributes
     public function get($model, string $key, $value, array $attributes)
     {
         if(!$value){
-            return env('APP_URL', url('/'))."/images/default/default_photo_profile.png";
+            return env('APP_URL', url('/'))."/assets/images/default/default_photo_profile.png";
         }
         return env('APP_URL', url('/'))."/$value";
     }

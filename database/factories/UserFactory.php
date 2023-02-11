@@ -77,9 +77,9 @@ class UserFactory extends Factory
                 'alumnus_tahun' => '20' . rand(10, 22),
                 'tempat_praktik' => 'rs. budi utomo',
                 'status' => $status[rand(0, 2)],
-                'cv' => 'images/default/default_photo_profile.png',
-                'str' => 'images/default/default_photo_profile.png',
-                'ktp' => 'images/default/default_photo_profile.png',
+                'cv' => 'assets/images/default/default_photo_profile.png',
+                'str' => 'assets/images/default/default_photo_profile.png',
+                'ktp' => 'assets/images/default/default_photo_profile.png',
             ]);
             if ($doctorInfo->status == 'open' || $doctorInfo->status == 'rejected') {
                 $user->update([
@@ -107,11 +107,13 @@ class UserFactory extends Factory
 
             $apotekInfo = ApotekInfo::create([
                 'user_id' => $user->id,
+                'province_id' => 13,
+                'city_id' => 198,
                 'name' => $this->faker->company(),
                 'address' => $this->faker->address(),
-                'ktp' => 'images/default/default_photo_profile.png',
-                'npwp' => 'images/default/default_photo_profile.png',
-                'surat_izin_usaha' => 'images/default/default_photo_profile.png',
+                'ktp' => 'assets/images/default/default_photo_profile.png',
+                'npwp' => 'assets/images/default/default_photo_profile.png',
+                'surat_izin_usaha' => 'assets/images/default/default_photo_profile.png',
                 'latitude' => $this->faker->latitude(-7, -6.9),
                 'longitude' => $this->faker->longitude(110.4, 110.6),
                 'status' => $status[rand(0, 2)],

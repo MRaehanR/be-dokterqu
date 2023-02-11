@@ -11,6 +11,15 @@
     </ul>
 </li>
 
+{{-- Shop --}}
+<li class="nav-item nav-dropdown open"><a class="nav-link nav-dropdown-toggle" href="#">Shop</a>
+    <ul class="nav-dropdown-items">
+        <li class="nav-item"><a class="nav-link" href="{{ backpack_url('products') }}"><i class="nav-icon la la-shopping-bag"></i> Products</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ backpack_url('product-category') }}"><i class="nav-icon la la-tags"></i> Categories</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ backpack_url('voucher') }}"><i class="nav-icon la la-ticket-alt"></i> Vouchers</a></li>
+    </ul>
+</li>
+
 
 {{-- Authentication --}}
 @if(backpack_user()->can('manage_users'))
@@ -25,4 +34,9 @@
 </li>
 @endif
 
-<li class='nav-item'><a class='nav-link' href='{{ backpack_url('log') }}'><i class='nav-icon la la-terminal'></i> Logs</a></li>
+{{-- Advanced --}}
+<li class="nav-item nav-dropdown open"><a class="nav-link nav-dropdown-toggle" href="#">Advanced</a>
+    <ul class="nav-dropdown-items">
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('log') }}'><i class='nav-icon la la-terminal'></i> Logs</a></li>   
+    </ul>
+</li>

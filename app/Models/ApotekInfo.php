@@ -6,6 +6,7 @@ use App\Casts\ImageCast;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class ApotekInfo extends Model
 {
@@ -14,6 +15,8 @@ class ApotekInfo extends Model
     protected $table = 'apotek_info';
     protected $fillable = [
         'user_id',
+        'province_id',
+        'city_id',
         'name',
         'address',
         'ktp',
@@ -29,6 +32,10 @@ class ApotekInfo extends Model
         'npwp' => ImageCast::class,
         'surat_izin_usaha' => ImageCast::class,
     ];
+    protected $appends = [
+        'province_name',
+        'city_name',
+    ];
 
     
     /*
@@ -40,6 +47,11 @@ class ApotekInfo extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function apotekStock()
+    {
+        return $this->hasMany(ApotekStock::class);
     }
 
 
@@ -58,9 +70,20 @@ class ApotekInfo extends Model
             }
             return $files;
         }
-        return array(env('APP_URL', url('/'))."/images/default/default_image_apotek.jpg");
+        return array(env('APP_URL', url('/'))."/assets/images/default/default_image_apotek.jpg");
     }
 
+    public function getProvinceNameAttribute()
+    {
+        $province = DB::table('provinces')->where('prov_id', $this->province_id)->first();
+        return ucwords(strtolower($province->prov_name));
+    }
+
+    public function getCityNameAttribute()
+    {
+        $province = DB::table('cities')->where('city_id', $this->city_id)->first();
+        return ucwords(strtolower($province->city_name));
+    }
 
     
     /*

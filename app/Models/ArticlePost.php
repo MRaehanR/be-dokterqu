@@ -59,7 +59,7 @@ class ArticlePost extends Model
     public function getThumbnailAttribute($value)
     {
         if(!$value){
-            return env('APP_URL', url('/'))."/images/default/default_thumbnail.png";
+            return env('APP_URL', url('/'))."/assets/images/default/default_thumbnail.png";
         }
         return env('APP_URL', url('/'))."/".$value;
     }

@@ -16,6 +16,8 @@ class CreateApotekInfoTable extends Migration
         Schema::create('apotek_info', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->integer('province_id');
+            $table->integer('city_id');
             $table->string('name', 50);
             $table->string('address', 100);
             $table->string('ktp');
@@ -25,6 +27,9 @@ class CreateApotekInfoTable extends Migration
             $table->double('latitude');
             $table->double('longitude');
             $table->timestamps();
+
+            $table->foreign('province_id')->references('prov_id')->on('provinces')->cascadeOnUpdate();
+            $table->foreign('city_id')->references('city_id')->on('cities')->cascadeOnUpdate();
         });
     }
 

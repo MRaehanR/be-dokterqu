@@ -89,6 +89,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(ArticleLike::class);
     }
 
+    public function productCart()
+    {
+        return $this->hasMany(CartItem::class);
+    }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -104,10 +109,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getPhotoAttribute($value)
     {
         if(!$value){
-            if($this->roles->first()->name == 'doctor' && $this->gender == 'male') return env('APP_URL', url('/'))."/images/default/default_photo_profile_doctor_male.webp";
-            if($this->roles->first()->name == 'doctor' && $this->gender == 'female') return env('APP_URL', url('/'))."/images/default/default_photo_profile_doctor_female.jpeg";
+            if($this->roles->first()->name == 'doctor' && $this->gender == 'male') return env('APP_URL', url('/'))."/assets/images/default/default_photo_profile_doctor_male.webp";
+            if($this->roles->first()->name == 'doctor' && $this->gender == 'female') return env('APP_URL', url('/'))."/assets/images/default/default_photo_profile_doctor_female.jpeg";
             
-            return env('APP_URL', url('/'))."/images/default/default_photo_profile_customer.png";
+            return env('APP_URL', url('/'))."/assets/images/default/default_photo_profile_customer.png";
         }
         return env('APP_URL', url('/'))."/".$value;
     }

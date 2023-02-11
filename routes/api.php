@@ -6,6 +6,10 @@ use App\Http\Controllers\Articles\ArticleCommentController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\MidtransController;
+use App\Http\Controllers\Shop\CartItemController;
+use App\Http\Controllers\Shop\ProductCategoryController;
+use App\Http\Controllers\Shop\ProductController;
 use App\Http\Controllers\User\CustomerAddressController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -61,9 +65,29 @@ Route::prefix('article')->group(function() {
 Route::prefix('user')->group(function() {
     Route::prefix('customer')->group(function() {
         Route::post('/address', [CustomerAddressController::class, 'setAddress'])->middleware('auth:sanctum');
+        Route::get('/address', [CustomerAddressController::class, 'getAddresses'])->middleware('auth:sanctum');
     });
 });
 
 Route::prefix('form')->group(function() {
     Route::get('/register/customer', [AuthController::class, 'formRegisterCustomer']);
+});
+
+Route::prefix('shop')->group(function() {
+    Route::get('/products', [ProductController::class, 'getAllProducts']);
+    Route::get('/product/{slug}', [ProductController::class, 'getProductBySlug']);
+    Route::post('/checkout/product', [ProductController::class, 'setCheckoutProduct'])->middleware('auth:sanctum');
+    Route::get('/get-available-apotek', [ProductController::class, 'getApotekHasProducts']);
+    Route::post('/get-midtrans-snap-token', [ProductController::class, 'getMidtransSnapToken'])->middleware('auth:sanctum');
+
+    Route::get('/category', [ProductCategoryController::class, 'getAllCategory']);
+
+    Route::get('/carts', [CartItemController::class, 'getCartItem'])->middleware('auth:sanctum');
+    Route::post('/cart/add', [CartItemController::class, 'addCartItem'])->middleware('auth:sanctum');
+    Route::post('/cart/remove', [CartItemController::class, 'removeCartItem'])->middleware('auth:sanctum');
+    Route::post('/cart/update', [CartItemController::class, 'updateCartItem'])->middleware('auth:sanctum');
+});
+
+Route::prefix('midtrans')->group(function() {
+    Route::post('/notification-handler', [MidtransController::class, 'notificationHandler']);
 });

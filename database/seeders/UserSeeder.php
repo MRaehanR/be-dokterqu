@@ -54,9 +54,9 @@ class UserSeeder extends Seeder
             'alumnus_tahun' => 2019,
             'tempat_praktik' => 'rs. budi utomo',
             'status' => 'accepted',
-            'cv' => 'images/default/default_photo_profile.png',
-            'str' => 'images/default/default_photo_profile.png',
-            'ktp' => 'images/default/default_photo_profile.png',
+            'cv' => 'assets/images/default/default_photo_profile.png',
+            'str' => 'assets/images/default/default_photo_profile.png',
+            'ktp' => 'assets/images/default/default_photo_profile.png',
         ]);
         $userDokter->assignRole('doctor');
 
@@ -71,11 +71,13 @@ class UserSeeder extends Seeder
         ]);
         ApotekInfo::create([
             'user_id' => $userApotek->id,
+            'province_id' => 13,
+            'city_id' => 198,
             'name' => 'Apotek Berkah Jaya',
             'address' => 'Jl. Soeharto No. 98, Jakarta.',
-            'ktp' => 'images/default/default_photo_profile.png',
-            'npwp' => 'images/default/default_photo_profile.png',
-            'surat_izin_usaha' => 'images/default/default_photo_profile.png',
+            'ktp' => 'assets/images/default/default_photo_profile.png',
+            'npwp' => 'assets/images/default/default_photo_profile.png',
+            'surat_izin_usaha' => 'assets/images/default/default_photo_profile.png',
             'latitude' => '-6.753476617844531',
             'longitude' => '110.84284069735776',
             'status' => 'accepted',
