@@ -69,6 +69,10 @@ Route::prefix('user')->group(function() {
     });
 });
 
+Route::prefix('form')->group(function() {
+    Route::get('/register/customer', [AuthController::class, 'formRegisterCustomer']);
+});
+
 Route::prefix('shop')->group(function() {
     Route::get('/products', [ProductController::class, 'getAllProducts']);
     Route::get('/product/{slug}', [ProductController::class, 'getProductBySlug']);
