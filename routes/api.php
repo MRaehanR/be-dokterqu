@@ -32,6 +32,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('auth')->group(function() {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
+    Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
     Route::prefix('password')->group(function() {
         Route::post('/forgot', [ForgotPasswordController::class, 'forgot']);
@@ -78,7 +79,7 @@ Route::prefix('shop')->group(function() {
     Route::get('/products', [ProductController::class, 'getAllProducts']);
     Route::get('/product/{slug}', [ProductController::class, 'getProductBySlug']);
     Route::post('/checkout/product', [ProductController::class, 'setCheckoutProduct'])->middleware('auth:sanctum');
-    Route::get('/get-available-apotek', [ProductController::class, 'getApotekHasProducts']);
+    Route::get('/get-available-apotek', [ProductController::class, 'getApotekHasProducts'])->middleware('auth:sanctum');
     Route::post('/get-midtrans-snap-token', [ProductController::class, 'getMidtransSnapToken'])->middleware('auth:sanctum');
 
     Route::get('/category', [ProductCategoryController::class, 'getAllCategory']);
