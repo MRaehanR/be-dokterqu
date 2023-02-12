@@ -161,6 +161,13 @@ class ProductController extends Controller
                 array_push($nearbyPharmacies, $pharmacy);
             }
 
+            if (!$nearbyPharmacies) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Apotek available Not Found',
+                ], Response::HTTP_NOT_FOUND);
+            }
+
             usort($nearbyPharmacies, function ($a, $b) {
                 return $a->distance <=> $b->distance;
             });
@@ -342,6 +349,14 @@ class ProductController extends Controller
                     'message' => 'Validation error',
                     'errors' => $validator->errors()
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            $orderDetail = OrderDetail::where('id', $request->order_id)->first();
+            if($orderDetail) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Order ID already exist, Duplicate Entry',
+                ], Response::HTTP_FORBIDDEN);
             }
 
             // Order Details
