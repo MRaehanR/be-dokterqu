@@ -6,6 +6,7 @@ use App\Http\Controllers\Articles\ArticleCommentController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\FormController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\Shop\CartItemController;
 use App\Http\Controllers\Shop\ProductCategoryController;
@@ -72,7 +73,7 @@ Route::prefix('user')->group(function() {
 });
 
 Route::prefix('form')->group(function() {
-    Route::get('/register/customer', [AuthController::class, 'formRegisterCustomer']);
+    Route::get('/register/customer', [FormController::class, 'registerCustomer']);
 });
 
 Route::prefix('shop')->group(function() {
