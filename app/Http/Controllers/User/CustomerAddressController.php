@@ -185,4 +185,31 @@ class CustomerAddressController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
+    public function deleteAddress($id)
+    {
+        try {
+            $customerAddress = CustomerAddress::where('id', $id)->first();
+
+            if (!$customerAddress) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'User Address Not Found',
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            $customerAddress->delete();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Delete Customer Address Success',
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }
