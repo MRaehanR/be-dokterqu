@@ -69,6 +69,7 @@ Route::prefix('user')->group(function() {
         Route::post('/address', [CustomerAddressController::class, 'setAddress'])->middleware('auth:sanctum');
         Route::get('/address', [CustomerAddressController::class, 'getAddresses'])->middleware('auth:sanctum');
         Route::post('/address/{id}/update', [CustomerAddressController::class, 'updateAddress'])->middleware('auth:sanctum');
+        Route::get('/address/{id}/delete', [CustomerAddressController::class, 'deleteAddress'])->middleware();
     });
 });
 
