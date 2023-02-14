@@ -17,11 +17,10 @@ class ProductFactory extends Factory
      */
     public function definition()
     {
-        $name = $this->faker->sentence();
         return [
             'category_id' => rand(1, ProductCategory::all()->count()),
-            'name' => $name,
-            'slug' => str_replace(' ', '-', $name),
+            'name' => $this->faker->sentence(),
+            'slug' => $this->faker->slug(),
             'desc' => $this->faker->paragraph(),
         ];
     }
