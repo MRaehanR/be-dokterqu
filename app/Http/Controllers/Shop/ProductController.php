@@ -118,6 +118,7 @@ class ProductController extends Controller
                         'cart' => [
                             'add_cart' => '/shop/cart/add?product_id=' . $product->id,
                             'remove_cart' => '/shop/cart/remove?product_id=' . $product->id,
+                            'update_cart' => '/shop/cart/update?product_id=' . $product->id . '&quantity=',
                         ]
                     ],
                 ],
