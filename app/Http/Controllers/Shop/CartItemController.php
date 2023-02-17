@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CartItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -126,17 +127,15 @@ class CartItemController extends Controller
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
-            $cartItem = CartItem::where('user_id', Auth('sanctum')->user()->id)->where('product_id', $request->product_id)->first();
-            if (!$cartItem) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Update cart failed, cart item not found',
-                ], Response::HTTP_NOT_FOUND);
-            }
-
-            $cartItem->update([
-                'quantity' => $request->quantity,
-            ]);
+            $cartItem = CartItem::updateOrCreate(
+                [
+                    'user_id' => Auth('sanctum')->user()->id,
+                    'product_id' => $request->product_id,
+                ],
+                [
+                    'quantity' => $request->quantity,
+                ]
+            );
 
             return response()->json([
                 'status' => true,
