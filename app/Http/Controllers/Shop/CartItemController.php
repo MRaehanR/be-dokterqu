@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
+use App\Models\ApotekStock;
 use App\Models\CartItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -27,13 +28,15 @@ class CartItemController extends Controller
             }
 
             foreach ($cartItems as $cartItem) {
+                $apotekStock = ApotekStock::where('product_id', $cartItem->product->id)->get();
                 array_push($data, [
                     'id' => $cartItem->id,
                     'quantity' => $cartItem->quantity,
                     'product' => [
                         'id' => $cartItem->product->id,
                         'name' => ucwords($cartItem->product->name),
-                        'price' => $cartItem->product->range_price,
+                        'price' => "Rp. " . number_format($apotekStock->min()->price, 0, null, '.'),
+                        'price_int' => (int) $apotekStock->min()->price,
                         'images' => $cartItem->product->images,
                     ],
                     'links' => [
