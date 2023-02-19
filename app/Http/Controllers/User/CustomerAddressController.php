@@ -80,16 +80,11 @@ class CustomerAddressController extends Controller
         }
     }
 
-    public function getAddresses(Request $request)
+    public function getAddresses()
     {
         try {
             $data = [];
-
-            if ($request->default) {
-                $addresses = CustomerAddress::where('user_id', Auth::user()->id)->where('default', 1)->get();
-            } else {
-                $addresses = CustomerAddress::where('user_id', Auth::user()->id)->get();
-            }
+            $addresses = CustomerAddress::where('user_id', Auth::user()->id)->get();
 
             if (count($addresses) === 0) {
                 return response()->json([
@@ -117,9 +112,48 @@ class CustomerAddressController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'Get Customer Address Success',
+                'message' => 'Get Customer Addresses Success',
                 'data' => $data,
-            ], Response::HTTP_CREATED);
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function getDefaultAddress()
+    {
+        try {
+            $address = CustomerAddress::where('user_id', Auth('sanctum')->user()->id)->where('default', true)->first();
+
+            if (!$address) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No data found',
+                    'data' => null,
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Get Customer Address Success',
+                'data' => [
+                    'id' => $address->id,
+                    'is_default' => $address->default,
+                    'label' => $address->label,
+                    'address' => $address->address,
+                    'label' => $address->label,
+                    'recipient' => $address->recipient,
+                    'phone' => $address->phone,
+                    'province' => $address->province_name,
+                    'city' => $address->city_name,
+                    'latitude' => $address->latitude,
+                    'longitude' => $address->longitude,
+                ],
+            ], Response::HTTP_OK);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return response()->json([
@@ -185,7 +219,7 @@ class CustomerAddressController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     public function deleteAddress($id)
     {
         try {
