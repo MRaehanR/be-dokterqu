@@ -135,8 +135,8 @@ class ProductController extends Controller
     public function getApotekHasProducts(Request $request)
     {
         try {
-            $products = $request->products;
             $userAddress = CustomerAddress::where('id', $request->address_id)->first();
+            $products = $request->products;
 
             if (!$userAddress) {
                 return response()->json([
@@ -233,11 +233,6 @@ class ProductController extends Controller
                 ],
                 'item_details' => [],
                 'customer_details' => [],
-                'enabled_payments' => [
-                    'gopay',
-                    'shopeepay',
-                    'bca_va',
-                ],
             ];
 
             $validator = Validator::make(
