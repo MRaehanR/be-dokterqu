@@ -33,7 +33,7 @@ class ArticlePostController extends Controller
                 $nextPageUrl .= '&type=' . urlencode($request->type);
             }
             if ($request->type == 'popular') {
-                $article = $articles->withCount('like')->orderBy('like_count', 'DESC');
+                $article = $articles->withCount(['like', 'comment'])->orderBy('comment_count', 'DESC')->orderBy('like_count', 'DESC');
                 $nextPageUrl .= '&type=' . urlencode($request->type);
             }
             $articles = $articles->simplePaginate(10);
@@ -107,7 +107,8 @@ class ArticlePostController extends Controller
                     'thumbnail' => $article->thumbnail,
                     'category' => ucwords($article->category->name),
                     'created_at' => date_format($article->created_at, 'd M Y, H:i'),
-                    'article_like_count' => $article->like()->count(),
+                    'article_like_count' => $article->like->count(),
+                    'article_comment_count' => $article->comment->count(),
                     'user' => [
                         'isLiked' => $isLiked,
                     ],
