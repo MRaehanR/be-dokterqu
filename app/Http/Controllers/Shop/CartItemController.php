@@ -213,4 +213,45 @@ class CartItemController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function deleteCartItem(Request $request)
+    {
+        try {
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'product_id' => 'required',
+                ]
+            );
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validator->errors()
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            $cartItem = CartItem::where('user_id', Auth('sanctum')->user()->id)->where('product_id', $request->product_id)->first();
+            if (!$cartItem) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Delete cart failed, cart item not found',
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            $cartItem->delete();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Delete cart item success',
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

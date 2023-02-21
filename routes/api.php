@@ -91,6 +91,7 @@ Route::prefix('shop')->group(function() {
     Route::post('/cart/add', [CartItemController::class, 'addCartItem'])->middleware('auth:sanctum');
     Route::post('/cart/remove', [CartItemController::class, 'removeCartItem'])->middleware('auth:sanctum');
     Route::post('/cart/update', [CartItemController::class, 'updateCartItem'])->middleware('auth:sanctum');
+    Route::delete('/cart/delete', [CartItemController::class, 'deleteCartItem'])->middleware('auth:sanctum');
 });
 
 Route::prefix('midtrans')->group(function() {
