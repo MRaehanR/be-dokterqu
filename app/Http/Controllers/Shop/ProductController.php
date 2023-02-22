@@ -66,6 +66,7 @@ class ProductController extends Controller
                         'cart' => [
                             'add_cart' => '/shop/cart/add?product_id=' . $product->id,
                             'remove_cart' => '/shop/cart/remove?product_id=' . $product->id,
+                            'delete_cart' => '/shop/cart/delete?product_id=' . $product->id,
                         ]
                     ],
                 ]);
