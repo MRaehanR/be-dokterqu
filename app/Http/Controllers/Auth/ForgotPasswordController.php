@@ -125,7 +125,7 @@ class ForgotPasswordController extends Controller
             }
 
             $user = User::firstWhere('email', $resetCode->email);
-            $user->password = Hash::make($request->input('password'));
+            $user->password = $request->input('password');
             $user->save();
             $resetCode->delete();
 
