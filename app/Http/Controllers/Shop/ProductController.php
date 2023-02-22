@@ -58,7 +58,7 @@ class ProductController extends Controller
                     'category' => ucwords($product->category->name),
                     'price' => $product->range_price,
                     'user' => [
-                        'inCart' => (isset($cartItem->quantity)) ? $cartItem->quantity : 0,
+                        'in_cart' => (isset($cartItem->quantity)) ? $cartItem->quantity : 0,
                     ],
                     'links' => [
                         'self' => '/shop/product/' . urlencode($product->slug),
@@ -117,7 +117,7 @@ class ProductController extends Controller
                     'category' => ucwords($product->category->name),
                     'price' => $product->range_price,
                     'user' => [
-                        'inCart' => (isset($cartItem->quantity)) ? $cartItem->quantity : 0,
+                        'in_cart' => (isset($cartItem->quantity)) ? $cartItem->quantity : 0,
                     ],
                     'links' => [
                         'category' => '/shop/products?category=' . urlencode($product->category->name),
