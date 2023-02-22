@@ -105,6 +105,8 @@ class ProductController extends Controller
                 ], Response::HTTP_NOT_FOUND);
             }
 
+            if (isset(Auth('sanctum')->user()->id)) $cartItem = CartItem::where('user_id', Auth('sanctum')->user()->id)->where('product_id', $product->id)->first();
+
             return response()->json([
                 'status' => true,
                 'message' => 'Get product success',
@@ -114,6 +116,9 @@ class ProductController extends Controller
                     'image' => $product->images,
                     'category' => ucwords($product->category->name),
                     'price' => $product->range_price,
+                    'user' => [
+                        'inCart' => (isset($cartItem->quantity)) ? $cartItem->quantity : 0,
+                    ],
                     'links' => [
                         'category' => '/shop/products?category=' . urlencode($product->category->name),
                         'cart' => [
