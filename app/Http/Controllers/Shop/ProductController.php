@@ -106,6 +106,7 @@ class ProductController extends Controller
             }
 
             if (isset(Auth('sanctum')->user()->id)) $cartItem = CartItem::where('user_id', Auth('sanctum')->user()->id)->where('product_id', $product->id)->first();
+            $apotekStock = ApotekStock::where('product_id', $product->id)->get();
 
             return response()->json([
                 'status' => true,
@@ -117,6 +118,8 @@ class ProductController extends Controller
                     'image' => $product->images,
                     'category' => ucwords($product->category->name),
                     'price' => $product->range_price,
+                    'price_min' => "Rp. " . number_format($apotekStock->min()->price, 0, null, '.'),
+                    'price_int' => (int) $apotekStock->min()->price,
                     'user' => [
                         'in_cart' => (isset($cartItem->quantity)) ? $cartItem->quantity : 0,
                     ],
