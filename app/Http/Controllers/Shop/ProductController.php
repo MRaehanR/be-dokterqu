@@ -111,6 +111,7 @@ class ProductController extends Controller
                 'status' => true,
                 'message' => 'Get product success',
                 'data' => [
+                    'id' => $product->id,
                     'name' => $product->name,
                     'desc' => $product->desc,
                     'image' => $product->images,
