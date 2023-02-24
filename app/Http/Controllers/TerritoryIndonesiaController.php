@@ -35,17 +35,18 @@ class TerritoryIndonesiaController extends Controller
     public function getCities(Request $request)
     {
         try {
+            $cities = DB::table('cities');
             if($request->search) {
-                $cities = DB::table('cities')->where('city_name', 'like', "%$request->search%")->get();
+                $cities = $cities->where('city_name', 'like', "%$request->search%");
             }
             if($request->province_id){
-                $cities = DB::table('cities')->where('prov_id', $request->province_id)->get();
+                $cities = $cities->where('prov_id', $request->province_id);
             }
 
             return response()->json([
                 'status' => true,
                 'message' => 'Get all cities success',
-                'data' => $cities,
+                'data' => $cities->get(),
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
