@@ -11,6 +11,7 @@ use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\Shop\CartItemController;
 use App\Http\Controllers\Shop\ProductCategoryController;
 use App\Http\Controllers\Shop\ProductController;
+use App\Http\Controllers\TerritoryIndonesiaController;
 use App\Http\Controllers\User\CustomerAddressController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -75,7 +76,8 @@ Route::prefix('user')->group(function() {
 });
 
 Route::prefix('form')->group(function() {
-    Route::get('/register/customer', [FormController::class, 'registerCustomer']);
+    Route::get('/register', [FormController::class, 'register']);
+    Route::get('/register/doctor', [FormController::class, 'registerDoctor']);
 });
 
 Route::prefix('shop')->group(function() {
@@ -96,4 +98,9 @@ Route::prefix('shop')->group(function() {
 
 Route::prefix('midtrans')->group(function() {
     Route::post('/notification-handler', [MidtransController::class, 'notificationHandler']);
+});
+
+Route::prefix('location')->group(function() {
+    Route::get('/provinces', [TerritoryIndonesiaController::class, 'getProvinces']);
+    Route::get('/cities', [TerritoryIndonesiaController::class, 'getCities']);
 });
