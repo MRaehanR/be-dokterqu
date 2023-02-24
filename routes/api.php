@@ -78,6 +78,7 @@ Route::prefix('user')->group(function() {
 Route::prefix('form')->group(function() {
     Route::get('/register', [FormController::class, 'register']);
     Route::get('/register/doctor', [FormController::class, 'registerDoctor']);
+    Route::get('/register/apotek', [FormController::class, 'registerApotek']);
 });
 
 Route::prefix('shop')->group(function() {

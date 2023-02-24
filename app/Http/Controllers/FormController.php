@@ -172,4 +172,59 @@ class FormController extends Controller
             ],
         ]);
     }
+
+    public function registerApotek()
+    {
+        return response()->json([
+            [
+                'label' => 'Apotek Images',
+                'name' => 'image[]',
+                'type' => 'file',
+                'required' => true,
+                'prepend_inner_icon' => 'mdi-paperclip',
+            ],
+            [
+                'label' => 'Alamat',
+                'name' => 'address',
+                'type' => 'text',
+                'required' => true,
+                'prepend_inner_icon' => 'mdi-home',
+            ],
+            [
+                'label' => 'Kartu Tanda Penduduk',
+                'name' => 'ktp',
+                'type' => 'file',
+                'required' => true,
+                'prepend_inner_icon' => 'mdi-card-account-details',
+            ],
+            [
+                'label' => 'Nomor Pokok Wajib Pajak',
+                'name' => 'npwp',
+                'type' => 'file',
+                'required' => true,
+                'prepend_inner_icon' => 'mdi-id-card',
+            ],
+            [
+                'label' => 'Surat Izin Usaha',
+                'name' => 'surat_izin_usaha',
+                'type' => 'file',
+                'required' => true,
+                'prepend_inner_icon' => 'mdi-email',
+            ],
+            [
+                'label' => 'Latitude Lokasi Apotek',
+                'name' => 'latitude',
+                'type' => 'text',
+                'required' => true,
+                'prepend_inner_icon' => 'mdi-latitude',
+            ],
+            [
+                'label' => 'Longitude Lokasi Apotek',
+                'name' => 'longitude',
+                'type' => 'text',
+                'required' => true,
+                'prepend_inner_icon' => 'mdi-longitude',
+            ],
+        ]);
+    }
 }
