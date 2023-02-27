@@ -86,7 +86,6 @@ Route::prefix('shop')->group(function() {
     Route::get('/product/{slug}', [ProductController::class, 'getProductBySlug']);
     Route::post('/checkout/product', [ProductController::class, 'setCheckoutProduct'])->middleware('auth:sanctum');
     Route::post('/get-available-apotek', [ProductController::class, 'getApotekHasProducts'])->middleware('auth:sanctum');
-    Route::post('/get-midtrans-snap-token', [ProductController::class, 'getMidtransSnapToken'])->middleware('auth:sanctum');
 
     Route::get('/category', [ProductCategoryController::class, 'getAllCategory']);
 
