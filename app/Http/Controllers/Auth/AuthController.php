@@ -105,11 +105,11 @@ class AuthController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'name' => 'required|min:5',
+                    'name' => 'required|string|min:5',
                     'email' => 'required|email|unique:users',
                     'password' => 'required|min:8|confirmed',
                     'photo' => 'mimes:jpg,png,jpeg,bmp|max:2048',
-                    'phone' => 'required|unique:users|max:15',
+                    'phone' => 'required|number|unique:users|max:15',
                     'gender' => 'required|in:m,f',
                     'role' => 'required',
                 ]
@@ -188,8 +188,8 @@ class AuthController extends Controller
                         [
                             'province_id' => 'required',
                             'city_id' => 'required',
-                            'name' => 'required|min:5',
-                            'address' => 'required',
+                            'name' => 'required|string|min:5',
+                            'address' => 'required|string|min:5',
                             'ktp' => 'required|mimes:jpg,png,jpeg,bmp|max:2048',
                             'npwp' => 'required|mimes:jpg,png,jpeg,bmp|max:2048',
                             'surat_izin_usaha' => 'required|mimes:jpg,png,jpeg,bmp|max:2048',
