@@ -109,7 +109,7 @@ class FormController extends Controller
             ],
             [
                 'label' => 'Kartu Tanda Penduduk',
-                'name' => 'str',
+                'name' => 'ktp',
                 'type' => 'file',
                 'required' => true,
                 'prepend_inner_icon' => 'mdi-paperclip',
