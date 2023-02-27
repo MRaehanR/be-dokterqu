@@ -109,7 +109,7 @@ class AuthController extends Controller
                     'email' => 'required|email|unique:users',
                     'password' => 'required|min:8|confirmed',
                     'photo' => 'mimes:jpg,png,jpeg,bmp|max:2048',
-                    'phone' => 'required|number|unique:users|max:15',
+                    'phone' => 'required|unique:users|max:15',
                     'gender' => 'required|in:m,f',
                     'role' => 'required',
                 ]
