@@ -120,28 +120,7 @@ class FormController extends Controller
                 'name' => 'type_doctor_id',
                 'type' => 'select',
                 'required' => true,
-                'options' => [
-                    [
-                        'label' => 'Sp. Mata',
-                        'value' => 1,
-                    ],
-                    [
-                        'label' => 'Sp. THT',
-                        'value' => 2,
-                    ],
-                    [
-                        'label' => 'Sp. kulit & kelamin',
-                        'value' => 3,
-                    ],
-                    [
-                        'label' => 'Dokter Gigi',
-                        'value' => 4,
-                    ],
-                    [
-                        'label' => 'Sp. Konservasi Gigi',
-                        'value' => 5,
-                    ],
-                ]
+                'options' => [],
             ],
             [
                 'label' => 'Pengalaman',
