@@ -335,7 +335,7 @@ class ProductController extends Controller
                     'message' => 'User Address Not Found',
                 ], Response::HTTP_NOT_FOUND);
             }
-            
+
             $orderID = 'SHOP_' . Carbon::now()->format('YmdHis') . '_' . Auth::user()->id;
 
             // Order Details
@@ -358,6 +358,12 @@ class ProductController extends Controller
 
             foreach ($request->products as $product) {
                 $apotekStock = ApotekStock::where('id', $product['apotek_stock_id'])->first();
+                if (!$apotekStock) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Apotek Stock Id not Found',
+                    ], Response::HTTP_NOT_FOUND);
+                }
                 $apotekStock->update([
                     'quantity' => $apotekStock->quantity - $product['quantity'],
                 ]);
@@ -378,7 +384,6 @@ class ProductController extends Controller
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ]);
-
             }
             $orderDetail->save();
             DB::table('order_items')->insert($orderItem);
