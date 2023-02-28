@@ -73,6 +73,9 @@ Route::prefix('user')->group(function() {
         Route::post('/address/{id}/update', [CustomerAddressController::class, 'updateAddress'])->middleware('auth:sanctum');
         Route::delete('/address/{id}/delete', [CustomerAddressController::class, 'deleteAddress'])->middleware('auth:sanctum');
     });
+    Route::prefix('doctor')->group(function() {
+        Route::get('/doctor-type', [FormController::class, 'getDoctorTypes']);
+    });
 });
 
 Route::prefix('form')->group(function() {
