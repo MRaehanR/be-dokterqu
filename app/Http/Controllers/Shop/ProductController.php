@@ -31,7 +31,7 @@ class ProductController extends Controller
 
             $products = Product::with(['category', 'apotekStock'])->has('apotekStock');
             if (isset($request->search)) {
-                $product = $products->whereHas('apotekStock', function ($query) use ($request) {
+                $products = $products->whereHas('apotekStock', function ($query) use ($request) {
                     $query->where('name', 'like', "%$request->search%")->orWhere('desc', 'like', "%$request->search%");
                 });
                 $nextPageUrl .= '&search=' . urlencode($request->search);

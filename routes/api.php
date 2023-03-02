@@ -6,6 +6,7 @@ use App\Http\Controllers\Articles\ArticleCommentController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\Shop\CartItemController;
@@ -75,7 +76,9 @@ Route::prefix('user')->group(function() {
     });
     Route::prefix('doctor')->group(function() {
         Route::get('/doctor-type', [FormController::class, 'getDoctorTypes']);
+        Route::get('/{slug}', [DoctorController::class, 'getDoctorBySlug']);
     });
+    Route::get('/doctors', [DoctorController::class, 'getDoctors']);
 });
 
 Route::prefix('form')->group(function() {
