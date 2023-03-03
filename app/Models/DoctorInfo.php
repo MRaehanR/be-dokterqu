@@ -28,6 +28,7 @@ class DoctorInfo extends Model
         'address',
         'latitude',
         'longitude',
+        'slug',
     ];
     protected $casts = [
         'cv' => ImageCast::class,
