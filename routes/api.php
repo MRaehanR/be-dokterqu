@@ -75,7 +75,7 @@ Route::prefix('user')->group(function() {
         Route::delete('/address/{id}/delete', [CustomerAddressController::class, 'deleteAddress'])->middleware('auth:sanctum');
     });
     Route::prefix('doctor')->group(function() {
-        Route::get('/doctor-type', [FormController::class, 'getDoctorTypes']);
+        Route::get('/doctor-type', [DoctorController::class, 'getDoctorTypes']);
         Route::get('/{slug}', [DoctorController::class, 'getDoctorBySlug']);
     });
     Route::get('/doctors', [DoctorController::class, 'getDoctors']);

@@ -60,16 +60,6 @@ class DoctorInfo extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function getPriceHomecareIntAttribute($value)
-    {
-        return $value ?? 0;
-    }
-
-    public function getPriceHomecareAttribute($value)
-    {
-        return $value ? 'Rp. ' . number_format($value, 0, null, '.') . ',00' : 'Rp. 0';
-    }
-
 
 
 
@@ -105,7 +95,8 @@ class DoctorInfo extends Model
     public function scopeDoctorType($query, $name)
     {
         return $query->whereHas('doctorType', function ($query) use ($name) {
-            $query->whereIn('name', ["$name"]);
+            // $query->whereIn('name', ["$name"]);
+            $query->where('name', 'like', "%$name%");
         });
     }
 }

@@ -15,8 +15,8 @@ class AddPriceColumnInDoctorInfo extends Migration
     {
         Schema::table('doctor_info', function (Blueprint $table) {
             $table->string('slug')->after('type_doctor_id');
-            $table->decimal('price_homecare', 13)->nullable()->after('tempat_praktik');
-            $table->boolean('is_available')->default(false)->after('price_homecare');
+            $table->decimal('price_homecare', 13)->nullable()->after('tempat_praktik')->default(0);
+            $table->boolean('is_available')->default(false)->after('status');
         });
     }
 
