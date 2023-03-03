@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CustomerAddress;
 use App\Models\DoctorInfo;
 use App\Models\DoctorType;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+
+use function PHPUnit\Framework\isNull;
 
 class DoctorController extends Controller
 {
@@ -64,7 +68,7 @@ class DoctorController extends Controller
                 $doctors = $doctors->doctorType($request->type);
                 $nextPageUrl .= '&type=' . urlencode($request->type);
             }
-            $doctors = $doctors->latest()->simplePaginate($request->input('limit', 10));
+            $doctors = $doctors->latest()->simplePaginate(10);
 
             if (count($doctors) === 0) {
                 return response()->json([
@@ -74,7 +78,27 @@ class DoctorController extends Controller
                 ], Response::HTTP_NOT_FOUND);
             }
 
-            foreach ($doctors as $doctor) {
+            if ($request->input('nearby', false)) {
+                $nearbyDoctors = [];
+                $userAddress = (Auth('sanctum')->user())
+                    ? CustomerAddress::where('user_id', Auth('sanctum')->user()->id)->where('default', true)->first() : null;
+                if (!$userAddress) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'User Address Not Found',
+                    ], Response::HTTP_NOT_FOUND);
+                }
+                foreach ($doctors as $doctor) {
+                    $distance = $this->calculateDistance($userAddress->latitude, $doctor->latitude, $userAddress->longitude, $doctor->longitude);
+                    $doctor['distance'] = $distance;
+                    array_push($nearbyDoctors, $doctor);
+                }
+                usort($nearbyDoctors, function ($a, $b) {
+                    return $a->distance <=> $b->distance;
+                });
+            }
+
+            foreach ($nearbyDoctors ?? $doctors as $doctor) {
                 array_push($data, [
                     'name' => ucwords($doctor->user->name),
                     'slug' => $doctor->slug,
@@ -83,6 +107,8 @@ class DoctorController extends Controller
                     'pengalaman' => $doctor->experience . ' Tahun',
                     'tempat_praktik' => ucwords($doctor->tempat_praktik),
                     'alumnus' => ucwords($doctor->alumnus),
+                    'distance' => $doctor->distance ? round($doctor->distance, 2) . ' km' : null,
+                    'is_online' => $doctor->user->is_online,
                     'price_homecare' => $doctor->price_homecare ? 'Rp. '
                         . number_format($doctor->price_homecare, 0, null, '.')
                         . ',00' : 'Rp. 0',
@@ -112,6 +138,20 @@ class DoctorController extends Controller
                 'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private function calculateDistance($lat1, $lat2, $lon1, $lon2)
+    {
+        $earthRadius = 6371;
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat / 2) * sin($dLat / 2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon / 2) * sin($dLon / 2);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+        $distance = $earthRadius * $c;
+
+        return $distance;
     }
 
     public function getDoctorBySlug($slug)
@@ -152,19 +192,5 @@ class DoctorController extends Controller
                 'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private function calculateDistance($lat1, $lat2, $lon1, $lon2)
-    {
-        $earthRadius = 6371;
-
-        $dLat = deg2rad($lat2 - $lat1);
-        $dLon = deg2rad($lon2 - $lon1);
-
-        $a = sin($dLat / 2) * sin($dLat / 2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon / 2) * sin($dLon / 2);
-        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-        $distance = $earthRadius * $c;
-
-        return $distance;
     }
 }

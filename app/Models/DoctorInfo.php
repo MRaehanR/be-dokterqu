@@ -25,15 +25,15 @@ class DoctorInfo extends Model
         'status',
         'price_homecare',
         'is_available',
+        'address',
+        'latitude',
+        'longitude',
     ];
     protected $casts = [
         'cv' => ImageCast::class,
         'str' => ImageCast::class,
         'ktp' => ImageCast::class,
         'is_available' => 'boolean',
-    ];
-    protected $appends = [
-        'price_homecare_int',
     ];
 
 
@@ -95,7 +95,6 @@ class DoctorInfo extends Model
     public function scopeDoctorType($query, $name)
     {
         return $query->whereHas('doctorType', function ($query) use ($name) {
-            // $query->whereIn('name', ["$name"]);
             $query->where('name', 'like', "%$name%");
         });
     }
