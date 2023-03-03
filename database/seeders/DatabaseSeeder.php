@@ -25,10 +25,10 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
         ]);
 
-        User::factory()->roleCustomer()->unverified()->count(10)->create();
-        User::factory()->roleDoctor()->unverified()->count(10)->create();
-        User::factory()->roleApotekOwner()->unverified()->count(10)->create();
+        User::factory()->roleCustomer()->unverified()->count(100)->create();
+        User::factory()->roleDoctor()->unverified()->count(100)->create();
+        User::factory()->roleApotekOwner()->unverified()->count(100)->create();
         ArticlePost::factory()->addComments()->addChildComments()->count(50)->create();
-        Product::factory()->addApotekStocks()->count(10)->create();
+        Product::factory()->addApotekStocks()->count(100)->create();
     }
 }
