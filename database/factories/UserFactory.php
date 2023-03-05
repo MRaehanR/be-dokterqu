@@ -3,8 +3,10 @@
 namespace Database\Factories;
 
 use App\Models\ApotekInfo;
+use App\Models\CustomerAddress;
 use App\Models\DoctorInfo;
 use App\Models\DoctorType;
+use App\Models\OperationalTime;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -55,6 +57,26 @@ class UserFactory extends Factory
     {
         return $this->afterCreating(function (User $user) {
             $user->assignRole('customer');
+
+            $label = [
+                'Rumah',
+                'Kantor',
+                'Sekolah',
+            ];
+
+            CustomerAddress::create([
+                'user_id' => $user->id,
+                'label' => $label[rand(0,2)],
+                'address' => $this->faker->address,
+                'note' => $this->faker->sentence(),
+                'recipient' => $user->name,
+                'phone' => $user->phone,
+                'latitude' => $this->faker->latitude(-7, -6.9),
+                'longitude' => $this->faker->longitude(110.4, 110.6),
+                'province_id' => 13,
+                'city_id' => 198,
+                'default' => 1,
+            ]);
         });
     }
 
@@ -87,6 +109,16 @@ class UserFactory extends Factory
                 'str' => 'assets/images/default/default_photo_profile.png',
                 'ktp' => 'assets/images/default/default_photo_profile.png',
             ]);
+
+            for ($i=1; $i <= 6; $i++) { 
+                OperationalTime::create([
+                    'user_id' => $user->id,
+                    'type' => 'homecare',
+                    'day' => $i,
+                    'start_time' => $this->faker->time('H:i:s'),
+                    'is_available' => rand(0,1),
+                ]);
+            }
             if ($doctorInfo->status == 'open' || $doctorInfo->status == 'rejected') {
                 $user->update([
                     'active' => 0,

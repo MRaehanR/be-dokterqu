@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\FormController;
+use App\Http\Controllers\Homecare\HomecareController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\Shop\CartItemController;
 use App\Http\Controllers\Shop\ProductCategoryController;
@@ -109,4 +110,8 @@ Route::prefix('midtrans')->group(function() {
 Route::prefix('location')->group(function() {
     Route::get('/provinces', [TerritoryIndonesiaController::class, 'getProvinces']);
     Route::get('/cities', [TerritoryIndonesiaController::class, 'getCities']);
+});
+
+Route::prefix('homecare')->group(function() {
+    Route::post('/checkout', [HomecareController::class, 'setCheckout'])->middleware('auth:sanctum');
 });

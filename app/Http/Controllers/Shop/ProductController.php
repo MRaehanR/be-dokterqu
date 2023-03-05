@@ -342,6 +342,7 @@ class ProductController extends Controller
             $orderDetail = new OrderDetail([
                 'id' => $orderID,
                 'user_id' => Auth::user()->id,
+                'address_id' => $userAddress->id,
             ]);
 
             if (isset($request->voucher_id)) {
