@@ -93,10 +93,10 @@ class DoctorInfo extends Model
         return $query->where('status', $value);
     }
 
-    public function scopeDoctorType($query, $name)
+    public function scopeDoctorType($query, $slug)
     {
-        return $query->whereHas('doctorType', function ($query) use ($name) {
-            $query->where('name', 'like', "%$name%");
+        return $query->whereHas('doctorType', function ($query) use ($slug) {
+            $query->where('slug', 'like', "%$slug%");
         });
     }
 }
