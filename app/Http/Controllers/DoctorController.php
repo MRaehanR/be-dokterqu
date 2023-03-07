@@ -30,6 +30,7 @@ class DoctorController extends Controller
                 array_push($data, [
                     'id' => $doctorType->id,
                     'name' => ucwords($doctorType->name),
+                    'slug' => $doctorType->slug,
                     'links' => [
                         'doctors' => '/user/doctors?type=' . urlencode($doctorType->slug),
                     ]
