@@ -38,6 +38,8 @@ class ArticleCommentController extends Controller
             foreach ($comments as $comment) {
                 $childComment = ArticleComment::where('article_post_id', $articlePostId)->where('parent_id', $comment->id)->get();
                 array_push($data, [
+                    'id' => $comment->id,
+                    'parent_id' => $comment->parent_id,
                     'user' => [
                         'name' => $comment->user->name,
                         'photo' => $comment->user->photo,
