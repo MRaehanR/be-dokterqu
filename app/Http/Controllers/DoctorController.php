@@ -178,6 +178,7 @@ class DoctorController extends Controller
                     'photo' => $doctor->user->photo,
                     'type' => $doctor->doctorType->name,
                     'pengalaman' => $doctor->experience . ' Tahun',
+                    'alumnus' => ucwords($doctor->alumnus),
                     'tempat_praktik' => ucwords($doctor->tempat_praktik),
                     'price_homecare' => $doctor->price_homecare ? 'Rp. '
                         . number_format($doctor->price_homecare, 0, null, '.')
