@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -26,6 +27,7 @@ class HomecareController extends Controller
                 [
                     'address_id' => 'required',
                     'operational_time_id' => 'required',
+                    'date' => 'required',
                     'voucher_id' => 'nullable',
                 ]
             );
@@ -74,6 +76,7 @@ class HomecareController extends Controller
                 'order_detail_id' => $orderID,
                 'doctor_info_id' => $operationalTime->user->doctorInfo->id,
                 'operational_time_id' => $operationalTime->id,
+                'date' => $request->date,
                 'status' => 'waiting_payment',
             ]);
 

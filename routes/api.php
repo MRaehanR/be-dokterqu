@@ -79,6 +79,7 @@ Route::prefix('user')->group(function() {
         Route::get('/doctor-type', [DoctorController::class, 'getDoctorTypes']);
         Route::get('/{slug}', [DoctorController::class, 'getDoctorBySlug']);
     });
+    Route::get('/doctors/operational-times', [DoctorController::class, 'getOperationalTime']);
     Route::get('/doctors', [DoctorController::class, 'getDoctors']);
 });
 

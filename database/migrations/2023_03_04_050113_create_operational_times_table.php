@@ -17,7 +17,15 @@ class CreateOperationalTimesTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->enum('type', ['homecare', 'apotek']);
-            $table->enum('day', ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']);
+            $table->enum('day', [
+                0 => 'sunday',
+                1 => 'monday',
+                2 =>  'tuesday',
+                3 => 'wednesday',
+                4 =>  'thursday',
+                5 => 'friday',
+                6 => 'saturday',
+            ]);
             $table->time('start_time');
             $table->time('end_time')->nullable();
             $table->boolean('is_available')->default(false);

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\CustomerAddress;
 use App\Models\DoctorInfo;
 use App\Models\DoctorType;
+use App\Models\OperationalTime;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -186,6 +188,48 @@ class DoctorController extends Controller
                     'price_homecare_int' => (int) $doctor->price_homecare,
                     'is_online' => $doctor->user->is_online,
                 ],
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')');
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function getOperationalTime(Request $request)
+    {
+        try {
+            $data = [];
+            $operationalTimes = OperationalTime::where('user_id', $request->user_id)->get();
+
+            if (!$operationalTimes) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Data Not Found',
+                    'data' => null,
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            foreach ($operationalTimes as $operationalTime) {
+                $dayName = ucwords($operationalTime->day);
+                $dayNumber = date('w', strtotime($dayName));
+                $data[$dayNumber]['day'] = $dayName;
+                $data[$dayNumber]['day_number'] = (int) $dayNumber;
+                $data[$dayNumber]['date'] = date('Y-m-d', strtotime($dayName));
+                $data[$dayNumber]['times'][] = [
+                    'id' => $operationalTime->id,
+                    'time' => substr($operationalTime->start_time, 0, 5),
+                    'is_available' => $operationalTime->is_available,
+                ];
+            }
+            ksort($data);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Get doctor operational times success',
+                'data' => $data,
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {
             Log::error($th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')');

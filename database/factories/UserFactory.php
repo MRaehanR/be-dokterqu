@@ -110,7 +110,7 @@ class UserFactory extends Factory
                 'ktp' => 'assets/images/default/default_photo_profile.png',
             ]);
 
-            for ($i=1; $i <= 6; $i++) { 
+            for ($i=1; $i <= 7; $i++) { 
                 OperationalTime::create([
                     'user_id' => $user->id,
                     'type' => 'homecare',
