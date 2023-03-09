@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 use function PHPUnit\Framework\isNull;
 
@@ -187,6 +188,9 @@ class DoctorController extends Controller
                         . ',00' : 'Rp. 0',
                     'price_homecare_int' => (int) $doctor->price_homecare,
                     'is_online' => $doctor->user->is_online,
+                    'links' => [
+                        'operational_times' => '/user/doctors/operational-times?user_id=' . $doctor->user->id,
+                    ]
                 ],
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {
@@ -201,10 +205,25 @@ class DoctorController extends Controller
     public function getOperationalTime(Request $request)
     {
         try {
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'user_id' => 'required',
+                ]
+            );
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validator->errors()
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+            
             $data = [];
             $operationalTimes = OperationalTime::where('user_id', $request->user_id)->get();
 
-            if (!$operationalTimes) {
+            if (count($operationalTimes) == 0) {
                 return response()->json([
                     'status' => false,
                     'message' => 'Data Not Found',
