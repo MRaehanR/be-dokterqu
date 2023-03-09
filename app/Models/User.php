@@ -10,6 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -51,6 +52,10 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'active' => 'boolean',
+    ];
+
+    protected $appends = [
+        'is_online',
     ];
 
     /*
@@ -124,6 +129,11 @@ class User extends Authenticatable implements MustVerifyEmail
         } else if($value === 'f'){
             return 'female';
         }
+    }
+
+    public function getIsOnlineAttribute()
+    {
+        return Cache::has('is_online_' . $this->id);
     }
 
 

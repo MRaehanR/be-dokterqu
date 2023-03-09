@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -160,6 +161,7 @@ class AuthController extends Controller
                     $user->save();
                     $doctorInfo = DoctorInfo::create([
                         'user_id' => $user->id,
+                        'slug' => Str::slug($user->name),
                         'type_doctor_id' => $request->type_doctor_id,
                         'experience' => $request->experience,
                         'alumnus' => $request->alumnus,

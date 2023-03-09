@@ -6,7 +6,9 @@ use App\Http\Controllers\Articles\ArticleCommentController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\FormController;
+use App\Http\Controllers\Homecare\HomecareController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\Shop\CartItemController;
 use App\Http\Controllers\Shop\ProductCategoryController;
@@ -74,8 +76,11 @@ Route::prefix('user')->group(function() {
         Route::delete('/address/{id}/delete', [CustomerAddressController::class, 'deleteAddress'])->middleware('auth:sanctum');
     });
     Route::prefix('doctor')->group(function() {
-        Route::get('/doctor-type', [FormController::class, 'getDoctorTypes']);
+        Route::get('/doctor-type', [DoctorController::class, 'getDoctorTypes']);
+        Route::get('/{slug}', [DoctorController::class, 'getDoctorBySlug']);
     });
+    Route::get('/doctors/operational-times', [DoctorController::class, 'getOperationalTime']);
+    Route::get('/doctors', [DoctorController::class, 'getDoctors']);
 });
 
 Route::prefix('form')->group(function() {
@@ -106,4 +111,8 @@ Route::prefix('midtrans')->group(function() {
 Route::prefix('location')->group(function() {
     Route::get('/provinces', [TerritoryIndonesiaController::class, 'getProvinces']);
     Route::get('/cities', [TerritoryIndonesiaController::class, 'getCities']);
+});
+
+Route::prefix('homecare')->group(function() {
+    Route::post('/checkout', [HomecareController::class, 'setCheckout'])->middleware('auth:sanctum');
 });

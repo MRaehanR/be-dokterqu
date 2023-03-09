@@ -207,27 +207,4 @@ class FormController extends Controller
             ],
         ]);
     }
-
-    public function getDoctorTypes(Request $request)
-    {
-        try {
-            if ($request->search) {
-                $doctorType = DB::table('doctor_type')->where('prov_name', 'like', "%$request->search%")->get();
-            } else {
-                $doctorType = DB::table('doctor_type')->get();
-            }
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Get all province success',
-                'data' => $doctorType,
-            ], Response::HTTP_OK);
-        } catch (\Throwable $th) {
-            Log::error($th->getMessage());
-            return response()->json([
-                'status' => false,
-                'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
 }

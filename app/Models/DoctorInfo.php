@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Casts\ImageCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class DoctorInfo extends Model
 {
@@ -22,14 +23,21 @@ class DoctorInfo extends Model
         'str',
         'ktp',
         'status',
+        'price_homecare',
+        'is_available',
+        'address',
+        'latitude',
+        'longitude',
+        'slug',
     ];
     protected $casts = [
         'cv' => ImageCast::class,
         'str' => ImageCast::class,
         'ktp' => ImageCast::class,
+        'is_available' => 'boolean',
     ];
 
-    
+
     /*
     |--------------------------------------------------------------------------
     | RELATIONSHIPS
@@ -53,9 +61,10 @@ class DoctorInfo extends Model
     |--------------------------------------------------------------------------
     */
 
-    
 
-    
+
+
+
     /*
     |--------------------------------------------------------------------------
     | MUTATORS
@@ -82,5 +91,12 @@ class DoctorInfo extends Model
     public function scopeStatus($query, $value)
     {
         return $query->where('status', $value);
+    }
+
+    public function scopeDoctorType($query, $slug)
+    {
+        return $query->whereHas('doctorType', function ($query) use ($slug) {
+            $query->where('slug', 'like', "%$slug%");
+        });
     }
 }
