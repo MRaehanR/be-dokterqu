@@ -219,7 +219,7 @@ class DoctorController extends Controller
                     'errors' => $validator->errors()
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
-            
+
             $data = [];
             $operationalTimes = OperationalTime::where('user_id', $request->user_id)->get();
 
@@ -241,6 +241,7 @@ class DoctorController extends Controller
                     'id' => $operationalTime->id,
                     'time' => substr($operationalTime->start_time, 0, 5),
                     'is_available' => $operationalTime->is_available,
+                    'clickedTimes' => false,
                 ];
             }
             ksort($data);
