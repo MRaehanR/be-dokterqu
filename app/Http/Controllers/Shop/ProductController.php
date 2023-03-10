@@ -251,6 +251,9 @@ class ProductController extends Controller
                     'bni_va',
                     'permata_va'
                 ],
+                'callbacks' => [
+                    'finish' => env('APP_CLIENT_URL', 'http://localhost:8080').'/commerce/shop/products',
+                ],
             ];
 
             $params['transaction_details']['order_id'] = $order_id;

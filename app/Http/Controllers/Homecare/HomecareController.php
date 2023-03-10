@@ -129,6 +129,9 @@ class HomecareController extends Controller
                     'bni_va',
                     'permata_va'
                 ],
+                'callbacks' => [
+                    'finish' => env('APP_CLIENT_URL', 'http://localhost:8080').'/janji-temu/list',
+                ],
             ];
 
             $params['transaction_details']['order_id'] = $order_id;
