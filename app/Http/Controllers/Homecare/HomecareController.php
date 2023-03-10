@@ -52,6 +52,13 @@ class HomecareController extends Controller
             $orderID = 'HOMECARE_' . Carbon::now()->format('YmdHis') . '_' . Auth::user()->id;
             $operationalTime = OperationalTime::where('id', $request->operational_time_id)->first();
 
+            if(!$operationalTime) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Operational time not found',
+                ], Response::HTTP_NOT_FOUND);
+            }
+
             if (!$operationalTime->is_available) {
                 return response()->json([
                     'status' => false,
