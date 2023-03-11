@@ -103,10 +103,16 @@ class CustomerAddressController extends Controller
                     'label' => $address->label,
                     'recipient' => $address->recipient,
                     'phone' => $address->phone,
+                    'province_id' => $address->province_id,
                     'province' => $address->province_name,
+                    'city_id' => $address->city_id,
                     'city' => $address->city_name,
                     'latitude' => $address->latitude,
                     'longitude' => $address->longitude,
+                    'links' => [
+                        'edit' => '/user/customer/address/' . $address->id . '/update',
+                        'delete' => '/user/customer/address/' . $address->id . '/delete',
+                    ],
                 ]);
             }
 

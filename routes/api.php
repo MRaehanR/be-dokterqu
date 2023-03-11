@@ -15,6 +15,7 @@ use App\Http\Controllers\Shop\ProductCategoryController;
 use App\Http\Controllers\Shop\ProductController;
 use App\Http\Controllers\TerritoryIndonesiaController;
 use App\Http\Controllers\User\CustomerAddressController;
+use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -68,6 +69,8 @@ Route::prefix('article')->group(function() {
 });
 
 Route::prefix('user')->group(function() {
+    Route::get('/profile', [UserController::class, 'getUserProfile'])->middleware('auth:sanctum');
+    Route::post('/profile', [UserController::class, 'updateUserProfile'])->middleware('auth:sanctum');
     Route::prefix('customer')->group(function() {
         Route::post('/address', [CustomerAddressController::class, 'setAddress'])->middleware('auth:sanctum');
         Route::get('/addresses', [CustomerAddressController::class, 'getAddresses'])->middleware('auth:sanctum');
