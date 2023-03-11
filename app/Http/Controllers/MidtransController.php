@@ -19,7 +19,7 @@ class MidtransController extends Controller
             $type = strtolower(substr($request->order_id, 0, strpos($request->order_id, '_')));
             if ($type === 'shop') {
                 return $this->shopHandler($request);
-            } else if($type === 'homecare'){
+            } else if ($type === 'homecare') {
                 return $this->homecareHandler($request);
             }
         } catch (\Throwable $th) {
@@ -130,7 +130,11 @@ class MidtransController extends Controller
             $orderPayment->status_code = $request->status_code;
             if ($request->transaction_status == 'settlement') {
                 $orderPayment->settlement_time = $request->transaction_time;
-                OrderHomecare::where('order_detail_id', $request->order_id)->update([
+                $orderHomecare = OrderHomecare::where('order_detail_id', $request->order_id)->first();
+                OperationalTime::where('id', $orderHomecare->operational_time_id)->update([
+                    'is_available' => false,
+                ]);
+                $orderHomecare->update([
                     'status' => 'open'
                 ]);
             }

@@ -87,11 +87,6 @@ class HomecareController extends Controller
                 'status' => 'waiting_payment',
             ]);
 
-            // Update is_available in Operational Time
-            $operationalTime->update([
-                'is_available' => false,
-            ]);
-
             $midtrans = $this->getMidtransSnapToken($orderID, $userAddress, $operationalTime->user->doctorInfo);
 
             return response()->json([
