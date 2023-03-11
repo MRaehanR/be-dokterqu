@@ -60,12 +60,6 @@ class FormController extends Controller
                 'prepend_inner_icon' => 'mdi-phone',
             ],
             [
-                'label' => 'Photo Profile',
-                'name' => 'photo',
-                'type' => 'file',
-                'required' => false,
-            ],
-            [
                 'label' => 'Gender',
                 'name' => 'gender',
                 'type' => 'select',
@@ -80,6 +74,12 @@ class FormController extends Controller
                         'value' => 'f',
                     ],
                 ]
+            ],
+            [
+                'label' => 'Photo Profile',
+                'name' => 'photo',
+                'type' => 'file',
+                'required' => false,
             ],
             [
                 'label' => 'Role',
