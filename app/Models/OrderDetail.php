@@ -17,6 +17,7 @@ class OrderDetail extends Model
 
     protected $table = 'order_details';
     protected $guarded = [];
+    public $incrementing = false;
 
 
     /*
@@ -30,6 +31,16 @@ class OrderDetail extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function orderPayment()
+    {
+        return $this->hasOne(OrderPayment::class);
+    }
 
     /*
     |--------------------------------------------------------------------------

@@ -15,6 +15,7 @@ use App\Http\Controllers\Shop\ProductCategoryController;
 use App\Http\Controllers\Shop\ProductController;
 use App\Http\Controllers\TerritoryIndonesiaController;
 use App\Http\Controllers\User\CustomerAddressController;
+use App\Http\Controllers\User\HistoryPurchaseController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -77,6 +78,10 @@ Route::prefix('user')->group(function() {
         Route::get('/default/address', [CustomerAddressController::class, 'getDefaultAddress'])->middleware('auth:sanctum');
         Route::post('/address/{id}/update', [CustomerAddressController::class, 'updateAddress'])->middleware('auth:sanctum');
         Route::delete('/address/{id}/delete', [CustomerAddressController::class, 'deleteAddress'])->middleware('auth:sanctum');
+
+        Route::prefix('history')->group(function() {
+            Route::get('/shop', [HistoryPurchaseController::class, 'getHistoryShop'])->middleware('auth:sanctum');
+        });
     });
     Route::prefix('doctor')->group(function() {
         Route::get('/doctor-type', [DoctorController::class, 'getDoctorTypes']);
