@@ -85,6 +85,7 @@ Route::prefix('user')->group(function() {
             Route::post('/shop/{orderId}/cancel', [HistoryPurchaseController::class, 'cancelHistoryShop'])->middleware('auth:sanctum');
 
             Route::get('/homecare', [HistoryPurchaseController::class, 'getHistoryHomecare'])->middleware('auth:sanctum');
+            Route::post('/homecare/{orderIT}/cancel', [HistoryPurchaseController::class, 'cancelHistoryHomecare'])->middleware('auth:sanctum');
         });
     });
     Route::prefix('doctor')->group(function() {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\ApotekInfo;
 use App\Models\OrderDetail;
+use App\Models\OrderHomecare;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -154,7 +155,7 @@ class HistoryPurchaseController extends Controller
 
             $orderDetail = OrderDetail::with('orderPayment')->where('id', $orderId)->first();
 
-            if ($orderDetail->orderPayment->status === 'settlement') {
+            if ($orderDetail->orderPayment->status === 'settlement' || $orderDetail->status === 'canceled' || $orderDetail->status === 'finish') {
                 return response()->json([
                     'status' => false,
                     'message' => 'Cannot Cancel Order Shop',
@@ -188,7 +189,9 @@ class HistoryPurchaseController extends Controller
             $orderDetails = OrderDetail::where('user_id', Auth()->user()->id)->with(['orderHomecares.doctorInfo.user', 'orderHomecares.operationalTime'])->has('orderHomecares')->has('orderPayment');
 
             if (isset($request->status)) {
-                $orderDetails = $orderDetails->where('status', $request->status);
+                $orderDetails = $orderDetails->whereHas('orderHomecares', function ($query) use ($request) {
+                    $query->where('status', $request->status);
+                });
                 $nextPageUrl .= '&status=' . urlencode($request->status);
             }
             $orderDetails = $orderDetails->latest()->simplePaginate(10);
@@ -241,6 +244,40 @@ class HistoryPurchaseController extends Controller
                         : $orderDetails->nextPageUrl(),
                     'homecare' => $data,
                 ],
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')');
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function cancelHistoryHomecare($orderId)
+    {
+        try {
+            \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+            \Midtrans\Config::$isProduction = false;
+
+            $orderDetail = OrderDetail::with(['orderPayment', 'orderHomecares'])->where('id', $orderId)->first();
+
+            if ($orderDetail->orderPayment->status === 'settlement' || $orderDetail->orderHomecares->status === 'canceled' || $orderDetail->orderHomecares->status === 'finished') {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Cannot Cancel Order Shop',
+                ], Response::HTTP_FORBIDDEN);
+            }
+
+            \Midtrans\Transaction::cancel($orderDetail->id);
+            $orderDetail->orderHomecares->update([
+                'status' => 'canceled'
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Cancel Order Shop Success',
+                'data' => $orderDetail,
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {
             Log::error($th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')');

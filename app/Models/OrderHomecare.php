@@ -17,6 +17,7 @@ class OrderHomecare extends Model
 
     protected $table = 'order_homecares';
     protected $guarded = ['id'];
+    public $incrementing = false;
 
     /*
     |--------------------------------------------------------------------------
@@ -45,6 +46,10 @@ class OrderHomecare extends Model
         return $this->belongsTo(OperationalTime::class);
     }
 
+    public function orderPayment()
+    {
+        return $this->hasOne(OrderPayment::class);
+    }
     /*
     |--------------------------------------------------------------------------
     | SCOPES
