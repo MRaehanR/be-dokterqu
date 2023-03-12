@@ -170,7 +170,6 @@ class HistoryPurchaseController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Cancel Order Shop Success',
-                'data' => $orderDetail,
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {
             Log::error($th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')');
