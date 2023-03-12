@@ -198,6 +198,10 @@ class CustomerAddressController extends Controller
                     'city' => $address->city_name,
                     'latitude' => $address->latitude,
                     'longitude' => $address->longitude,
+                    'links' => [
+                        'edit' => '/user/customer/address/' . $address->id . '/update',
+                        'delete' => '/user/customer/address/' . $address->id . '/delete',
+                    ],
                 ],
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {
