@@ -10,6 +10,9 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -72,15 +75,7 @@ class DoctorController extends Controller
                 $doctors = $doctors->doctorType($request->type);
                 $nextPageUrl .= '&type=' . urlencode($request->type);
             }
-            $doctors = $doctors->latest()->simplePaginate(10);
-
-            if (count($doctors) === 0) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'No data found',
-                    'data' => null,
-                ], Response::HTTP_NOT_FOUND);
-            }
+            $doctors = $doctors->get();
 
             if ($request->input('nearby', false)) {
                 $nearbyDoctors = [];
@@ -100,9 +95,22 @@ class DoctorController extends Controller
                 usort($nearbyDoctors, function ($a, $b) {
                     return $a->distance <=> $b->distance;
                 });
+
+                $doctors = $nearbyDoctors;
+                $nextPageUrl .= '&nearby=' . urlencode($request->nearby);
             }
 
-            foreach ($nearbyDoctors ?? $doctors as $doctor) {
+            $doctors = $this->paginate($doctors, 10, null, ['path' => env('APP_URL', 'http://localhost:8000') . '/api/user/doctors']);
+
+            if (count($doctors) === 0) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No data found',
+                    'data' => null,
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            foreach ($doctors as $doctor) {
                 array_push($data, [
                     'name' => ucwords($doctor->user->name),
                     'slug' => $doctor->slug,
@@ -143,6 +151,14 @@ class DoctorController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    private function paginate($items, $perPage = 5, $page = null, $options = [])
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof Collection ? $items : Collection::make($items);
+        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
+    }
+
 
     private function calculateDistance($lat1, $lat2, $lon1, $lon2)
     {
