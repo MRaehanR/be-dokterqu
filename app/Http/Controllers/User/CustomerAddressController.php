@@ -110,6 +110,7 @@ class CustomerAddressController extends Controller
                     'latitude' => $address->latitude,
                     'longitude' => $address->longitude,
                     'links' => [
+                        'self' => '/user/customer/address/' . $address->id,
                         'edit' => '/user/customer/address/' . $address->id . '/update',
                         'delete' => '/user/customer/address/' . $address->id . '/delete',
                     ],
@@ -134,6 +135,45 @@ class CustomerAddressController extends Controller
     {
         try {
             $address = CustomerAddress::where('user_id', Auth('sanctum')->user()->id)->where('default', true)->first();
+
+            if (!$address) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No data found',
+                    'data' => null,
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Get Customer Address Success',
+                'data' => [
+                    'id' => $address->id,
+                    'is_default' => $address->default,
+                    'label' => $address->label,
+                    'address' => $address->address,
+                    'label' => $address->label,
+                    'recipient' => $address->recipient,
+                    'phone' => $address->phone,
+                    'province' => $address->province_name,
+                    'city' => $address->city_name,
+                    'latitude' => $address->latitude,
+                    'longitude' => $address->longitude,
+                ],
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function getAddressById($id)
+    {
+        try {
+            $address = CustomerAddress::where('id', $id)->where('default', true)->first();
 
             if (!$address) {
                 return response()->json([

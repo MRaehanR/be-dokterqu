@@ -17,6 +17,7 @@ use App\Http\Controllers\TerritoryIndonesiaController;
 use App\Http\Controllers\User\CustomerAddressController;
 use App\Http\Controllers\User\HistoryPurchaseController;
 use App\Http\Controllers\User\UserController;
+use App\Models\CustomerAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -76,6 +77,7 @@ Route::prefix('user')->group(function() {
         Route::post('/address', [CustomerAddressController::class, 'setAddress'])->middleware('auth:sanctum');
         Route::get('/addresses', [CustomerAddressController::class, 'getAddresses'])->middleware('auth:sanctum');
         Route::get('/default/address', [CustomerAddressController::class, 'getDefaultAddress'])->middleware('auth:sanctum');
+        Route::get('/address/{id}', [CustomerAddressController::class, 'getAddressById'])->middleware('auth:sanctum');
         Route::post('/address/{id}/update', [CustomerAddressController::class, 'updateAddress'])->middleware('auth:sanctum');
         Route::delete('/address/{id}/delete', [CustomerAddressController::class, 'deleteAddress'])->middleware('auth:sanctum');
 
