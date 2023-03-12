@@ -63,7 +63,7 @@ class DoctorController extends Controller
             $data = [];
             $nextPageUrl = '';
 
-            $doctors = DoctorInfo::with(['user'])->status($request->input('status', 'accepted'));
+            $doctors = DoctorInfo::with(['user'])->has('user.operationalTimes')->status($request->input('status', 'accepted'));
 
             if (isset($request->search)) {
                 $doctors = $doctors->whereHas('user', function ($query) use ($request) {

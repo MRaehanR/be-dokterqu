@@ -99,6 +99,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(CartItem::class);
     }
 
+    public function operationalTimes()
+    {
+        return $this->hasMany(OperationalTime::class);
+    }
+
 
     /*
     |--------------------------------------------------------------------------
