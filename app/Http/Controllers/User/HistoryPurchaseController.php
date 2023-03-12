@@ -57,7 +57,7 @@ class HistoryPurchaseController extends Controller
                     ],
                     'links' => [
                         'self' => '/user/customer/history/shop/' . $orderDetail->id,
-                        'cancel_order' => ($orderDetail->status === 'canceled') ? '/user/customer/history/shop/' . $orderDetail->id . '/cancel' : null,
+                        'cancel_order' => ($orderDetail->status === 'waiting_payment') ? '/user/customer/history/shop/' . $orderDetail->id . '/cancel' : null,
                     ]
                 ];
             }
@@ -130,7 +130,7 @@ class HistoryPurchaseController extends Controller
             }
 
             $data['link'] = [
-                'cancel_order' => ($orderDetail->status === 'canceled') ? '/user/customer/history/shop/' . $orderDetail->id . '/cancel' : null,
+                'cancel_order' => ($orderDetail->status === 'waiting_payment') ? '/user/customer/history/shop/' . $orderDetail->id . '/cancel' : null,
             ];
 
             return response()->json([
@@ -162,7 +162,7 @@ class HistoryPurchaseController extends Controller
                 ], Response::HTTP_FORBIDDEN);
             }
 
-            \Midtrans\Transaction::cancel($orderDetail->id);
+            \Midtrans\Transaction::cancel($orderId);
             $orderDetail->update([
                 'status' => 'canceled'
             ]);
@@ -230,6 +230,9 @@ class HistoryPurchaseController extends Controller
                     'operational_time' => [
                         'id' => $operationalTime->id,
                         'time' => substr($operationalTime->start_time, 0, 5),
+                    ],
+                    'links' => [
+                        'cancel_order' => ($orderDetail->orderHomecares->status === 'waiting_payment') ? '/user/customer/history/homecare/' . $orderDetail->id . '/cancel' : null,
                     ]
                 ];
             }
@@ -269,15 +272,14 @@ class HistoryPurchaseController extends Controller
                 ], Response::HTTP_FORBIDDEN);
             }
 
-            \Midtrans\Transaction::cancel($orderDetail->id);
+            \Midtrans\Transaction::cancel($orderId);
             $orderDetail->orderHomecares->update([
                 'status' => 'canceled'
             ]);
 
             return response()->json([
                 'status' => true,
-                'message' => 'Cancel Order Shop Success',
-                'data' => $orderDetail,
+                'message' => 'Cancel Order Homecare Success',
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {
             Log::error($th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')');
