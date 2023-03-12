@@ -173,7 +173,7 @@ class CustomerAddressController extends Controller
     public function getAddressById($id)
     {
         try {
-            $address = CustomerAddress::where('id', $id)->where('default', true)->first();
+            $address = CustomerAddress::where('id', $id)->first();
 
             if (!$address) {
                 return response()->json([
