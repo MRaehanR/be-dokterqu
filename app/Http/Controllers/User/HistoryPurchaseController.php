@@ -54,6 +54,9 @@ class HistoryPurchaseController extends Controller
                         'image' => $orderItem->apotekStock->product->images,
                         'price' => "Rp. " . number_format($orderItem->apotekStock->price, 0, null, '.'),
                     ],
+                    'links' => [
+                        'self' => '/user/customer/history/shop/' . $orderDetail->id,
+                    ]
                 ];
             }
 
@@ -67,6 +70,67 @@ class HistoryPurchaseController extends Controller
                         : $orderDetails->nextPageUrl(),
                     'orders' => $data,
                 ],
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')');
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function getDetailHistoryShop($orderId)
+    {
+        try {
+            $data = [];
+            $orderDetail = OrderDetail::where('id', $orderId)->with(['orderItems.apotekStock.product', 'orderItems.apotekStock.apotekInfo', 'address', 'orderPayment'])->first();
+
+            if (!$orderDetail) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No Data Order Detail',
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            $apotekInfo = $orderDetail->orderItems[0]->apotekStock->apotekInfo;
+            $address = $orderDetail->address;
+            $data = [
+                'id' => $orderDetail->id,
+                'order_amount' => $orderDetail->order_amount,
+                'status' => $orderDetail->status,
+                'order_item_count' => count($orderDetail->orderItems),
+                'order_at' => date_format($orderDetail->created_at, 'd M Y'),
+                'payment_method' => $orderDetail->orderPayment->payment_type,
+                'address' => [
+                    'label' => $address->label,
+                    'address' => $address->address,
+                    'recipient' => $address->recipient,
+                    'phone' => $address->phone,
+                    'note' => $address->note,
+                ],
+                'apotek' => [
+                    'name' => $apotekInfo->name,
+                    'address' => $apotekInfo->address,
+                    'image' => $apotekInfo->image,
+                    'province_name' => $apotekInfo->province_name,
+                    'city_name' => $apotekInfo->city_name,
+                ],
+            ];
+
+            foreach ($orderDetail->orderItems as $orderItem) {
+                $data['products'][] = [
+                    'name' => $orderItem->apotekStock->product->name,
+                    'quantity' => $orderItem->quantity,
+                    'image' => $orderItem->apotekStock->product->images,
+                    'price' => "Rp. " . number_format($orderItem->apotekStock->price, 0, null, '.'),
+                ];
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Get Detail History Shop Success',
+                'data' => $data,
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {
             Log::error($th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')');

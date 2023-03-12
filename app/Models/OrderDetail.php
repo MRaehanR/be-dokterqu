@@ -19,7 +19,6 @@ class OrderDetail extends Model
     protected $guarded = [];
     public $incrementing = false;
 
-
     /*
     |--------------------------------------------------------------------------
     | FUNCTIONS
@@ -40,6 +39,11 @@ class OrderDetail extends Model
     public function orderPayment()
     {
         return $this->hasOne(OrderPayment::class);
+    }
+
+    public function address()
+    {
+        return $this->belongsTo(CustomerAddress::class);
     }
 
     /*

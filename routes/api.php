@@ -81,6 +81,7 @@ Route::prefix('user')->group(function() {
 
         Route::prefix('history')->group(function() {
             Route::get('/shop', [HistoryPurchaseController::class, 'getHistoryShop'])->middleware('auth:sanctum');
+            Route::get('/shop/{orderId}', [HistoryPurchaseController::class, 'getDetailHistoryShop'])->middleware('auth:sanctum');
         });
     });
     Route::prefix('doctor')->group(function() {
