@@ -56,6 +56,7 @@ class HistoryPurchaseController extends Controller
                     ],
                     'links' => [
                         'self' => '/user/customer/history/shop/' . $orderDetail->id,
+                        'cancel_order' => ($orderDetail->status === 'canceled') ? '/user/customer/history/shop/' . $orderDetail->id . '/cancel' : null,
                     ]
                 ];
             }
@@ -127,10 +128,48 @@ class HistoryPurchaseController extends Controller
                 ];
             }
 
+            $data['link'] = [
+                'cancel_order' => ($orderDetail->status === 'canceled') ? '/user/customer/history/shop/' . $orderDetail->id . '/cancel' : null,
+            ];
+
             return response()->json([
                 'status' => true,
                 'message' => 'Get Detail History Shop Success',
                 'data' => $data,
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')');
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function cancelHistoryShop($orderId)
+    {
+        try {
+            \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+            \Midtrans\Config::$isProduction = false;
+
+            $orderDetail = OrderDetail::with('orderPayment')->where('id', $orderId)->first();
+
+            if ($orderDetail->orderPayment->status === 'settlement') {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Cannot Cancel Order Shop',
+                ], Response::HTTP_FORBIDDEN);
+            }
+
+            \Midtrans\Transaction::cancel($orderDetail->id);
+            $orderDetail->update([
+                'status' => 'canceled'
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Cancel Order Shop Success',
+                'data' => $orderDetail,
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {
             Log::error($th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')');
