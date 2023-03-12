@@ -30,6 +30,21 @@ class OrderHomecare extends Model
     |--------------------------------------------------------------------------
     */
 
+    public function orderDetail()
+    {
+        return $this->belongsTo(OrderDetail::class);
+    }
+
+    public function doctorInfo()
+    {
+        return $this->belongsTo(DoctorInfo::class);
+    }
+
+    public function operationalTime()
+    {
+        return $this->belongsTo(OperationalTime::class);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES

@@ -37,7 +37,7 @@ class HistoryPurchaseController extends Controller
                 $apotekInfo = $orderItem->apotekStock->apotekInfo;
                 $data[] = [
                     'id' => $orderDetail->id,
-                    'order_amount' => $orderDetail->order_amount,
+                    'order_amount' => "Rp. " . number_format($orderDetail->order_amount, 0, null, '.'),
                     'status' => $orderDetail->status,
                     'order_item_count' => count($orderDetail->orderItems),
                     'order_at' => date_format($orderDetail->created_at, 'd M Y'),
@@ -98,7 +98,7 @@ class HistoryPurchaseController extends Controller
             $address = $orderDetail->address;
             $data = [
                 'id' => $orderDetail->id,
-                'order_amount' => $orderDetail->order_amount,
+                'order_amount' => "Rp. " . number_format($orderDetail->order_amount, 0, null, '.'),
                 'status' => $orderDetail->status,
                 'order_item_count' => count($orderDetail->orderItems),
                 'order_at' => date_format($orderDetail->created_at, 'd M Y'),
@@ -170,6 +170,77 @@ class HistoryPurchaseController extends Controller
                 'status' => true,
                 'message' => 'Cancel Order Shop Success',
                 'data' => $orderDetail,
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')');
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function getHistoryHomecare(Request $request)
+    {
+        try {
+            $data = [];
+            $nextPageUrl = '';
+            $orderDetails = OrderDetail::where('user_id', Auth()->user()->id)->with(['orderHomecares.doctorInfo.user', 'orderHomecares.operationalTime'])->has('orderHomecares')->has('orderPayment');
+
+            if (isset($request->status)) {
+                $orderDetails = $orderDetails->where('status', $request->status);
+                $nextPageUrl .= '&status=' . urlencode($request->status);
+            }
+            $orderDetails = $orderDetails->latest()->simplePaginate(10);
+
+            if (count($orderDetails) === 0) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No Data Order Detail',
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            foreach ($orderDetails as $orderDetail) {
+                $doctor = $orderDetail->orderHomecares->doctorInfo;
+                $operationalTime = $orderDetail->orderHomecares->operationalTime;
+                $data[] = [
+                    'id' => $orderDetail->id,
+                    'order_amount' => "Rp. " . number_format($orderDetail->order_amount, 0, null, '.'),
+                    'status' => $orderDetail->orderHomecares->status,
+                    'order_date' => $orderDetail->orderHomecares->date,
+                    'order_at' => date_format($orderDetail->created_at, 'd M Y'),
+                    'doctor' => [
+                        'name' => ucwords($doctor->user->name),
+                        'slug' => $doctor->slug,
+                        'photo' => $doctor->user->photo,
+                        'phone' => $doctor->user->phone,
+                        'type' => $doctor->doctorType->name,
+                        'pengalaman' => $doctor->experience . ' Tahun',
+                        'tempat_praktik' => ucwords($doctor->tempat_praktik),
+                        'alumnus' => ucwords($doctor->alumnus),
+                        'is_online' => $doctor->user->is_online,
+                        'price_homecare' => $doctor->price_homecare ? 'Rp. '
+                            . number_format($doctor->price_homecare, 0, null, '.')
+                            . ',00' : 'Rp. 0',
+                        'price_homecare_int' => (int) $doctor->price_homecare,
+                    ],
+                    'operational_time' => [
+                        'id' => $operationalTime->id,
+                        'time' => substr($operationalTime->start_time, 0, 5),
+                    ]
+                ];
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Get History Shop Success',
+                'data' => [
+                    'current' => $orderDetails->currentPage(),
+                    'next_page' => (isset($nextPageUrl) && $orderDetails->nextPageUrl())
+                        ? $orderDetails->nextPageUrl() . $nextPageUrl
+                        : $orderDetails->nextPageUrl(),
+                    'homecare' => $data,
+                ],
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {
             Log::error($th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')');
