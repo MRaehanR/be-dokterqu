@@ -247,6 +247,11 @@ class CustomerAddressController extends Controller
                 ], Response::HTTP_NOT_FOUND);
             }
 
+            $oldDefaultAddress = CustomerAddress::where('user_id', Auth::user()->id)->where('default', 1)->first();
+            if ($request->default == 1 && isset($oldDefaultAddress)) {
+                $oldDefaultAddress->update(['default' => 0]);
+            }
+
             $customerAddress = $customerAddress->update([
                 'user_id' => Auth::user()->id,
                 'label' => ucwords($request->label),
@@ -257,6 +262,7 @@ class CustomerAddressController extends Controller
                 'longitude' => $request->longitude,
                 'province_id' => $request->province_id,
                 'city_id' => $request->city_id,
+                'default' => $request->default,
             ]);
 
             return response()->json([
