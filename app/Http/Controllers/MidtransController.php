@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ApotekStock;
 use App\Models\OperationalTime;
+use App\Models\OrderDetail;
 use App\Models\OrderHomecare;
 use App\Models\OrderItem;
 use App\Models\OrderPayment;
@@ -35,6 +36,7 @@ class MidtransController extends Controller
     {
         try {
             $orderPayment = OrderPayment::where('order_detail_id', $request->order_id)->first();
+            $orderDetail = OrderDetail::where('id', $request->order_id)->first();
 
             if (!$orderPayment) {
                 $orderPayment = new OrderPayment([
@@ -68,9 +70,15 @@ class MidtransController extends Controller
             $orderPayment->status_code = $request->status_code;
             if ($request->transaction_status == 'settlement') {
                 $orderPayment->settlement_time = $request->transaction_time;
+                $orderDetail->update([
+                    'status' => 'waiting_confirmation',
+                ]);
             }
             if ($request->transaction_status == 'cancel' || $request->transaction_status == 'expire' || $request->transaction_status == 'deny') {
                 $orderItems = OrderItem::where('order_detail_id', $orderPayment->order_detail_id)->get();
+                $orderDetail->update([
+                    'status' => 'canceled',
+                ]);
 
                 foreach ($orderItems as $orderItem) {
                     $apotekStock = ApotekStock::where('id', $orderItem->apotek_stock_id)->first();

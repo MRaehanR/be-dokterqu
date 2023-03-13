@@ -15,6 +15,9 @@ use App\Http\Controllers\Shop\ProductCategoryController;
 use App\Http\Controllers\Shop\ProductController;
 use App\Http\Controllers\TerritoryIndonesiaController;
 use App\Http\Controllers\User\CustomerAddressController;
+use App\Http\Controllers\User\HistoryPurchaseController;
+use App\Http\Controllers\User\UserController;
+use App\Models\CustomerAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -68,12 +71,24 @@ Route::prefix('article')->group(function() {
 });
 
 Route::prefix('user')->group(function() {
+    Route::get('/profile', [UserController::class, 'getUserProfile'])->middleware('auth:sanctum');
+    Route::post('/profile', [UserController::class, 'updateUserProfile'])->middleware('auth:sanctum');
     Route::prefix('customer')->group(function() {
         Route::post('/address', [CustomerAddressController::class, 'setAddress'])->middleware('auth:sanctum');
         Route::get('/addresses', [CustomerAddressController::class, 'getAddresses'])->middleware('auth:sanctum');
         Route::get('/default/address', [CustomerAddressController::class, 'getDefaultAddress'])->middleware('auth:sanctum');
+        Route::get('/address/{id}', [CustomerAddressController::class, 'getAddressById'])->middleware('auth:sanctum');
         Route::post('/address/{id}/update', [CustomerAddressController::class, 'updateAddress'])->middleware('auth:sanctum');
         Route::delete('/address/{id}/delete', [CustomerAddressController::class, 'deleteAddress'])->middleware('auth:sanctum');
+
+        Route::prefix('history')->group(function() {
+            Route::get('/shop', [HistoryPurchaseController::class, 'getHistoryShop'])->middleware('auth:sanctum');
+            Route::get('/shop/{orderId}', [HistoryPurchaseController::class, 'getDetailHistoryShop'])->middleware('auth:sanctum');
+            Route::post('/shop/{orderId}/cancel', [HistoryPurchaseController::class, 'cancelHistoryShop'])->middleware('auth:sanctum');
+
+            Route::get('/homecare', [HistoryPurchaseController::class, 'getHistoryHomecare'])->middleware('auth:sanctum');
+            Route::post('/homecare/{orderIT}/cancel', [HistoryPurchaseController::class, 'cancelHistoryHomecare'])->middleware('auth:sanctum');
+        });
     });
     Route::prefix('doctor')->group(function() {
         Route::get('/doctor-type', [DoctorController::class, 'getDoctorTypes']);

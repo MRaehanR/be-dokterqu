@@ -17,6 +17,7 @@ class OrderHomecare extends Model
 
     protected $table = 'order_homecares';
     protected $guarded = ['id'];
+    public $incrementing = false;
 
     /*
     |--------------------------------------------------------------------------
@@ -30,6 +31,25 @@ class OrderHomecare extends Model
     |--------------------------------------------------------------------------
     */
 
+    public function orderDetail()
+    {
+        return $this->belongsTo(OrderDetail::class);
+    }
+
+    public function doctorInfo()
+    {
+        return $this->belongsTo(DoctorInfo::class);
+    }
+
+    public function operationalTime()
+    {
+        return $this->belongsTo(OperationalTime::class);
+    }
+
+    public function orderPayment()
+    {
+        return $this->hasOne(OrderPayment::class);
+    }
     /*
     |--------------------------------------------------------------------------
     | SCOPES

@@ -31,6 +31,16 @@ class OrderItem extends Model
     |--------------------------------------------------------------------------
     */
 
+    public function orderDetail()
+    {
+        return $this->belongsTo(OrderDetail::class);
+    }
+
+    public function apotekStock()
+    {
+        return $this->belongsTo(ApotekStock::class);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES

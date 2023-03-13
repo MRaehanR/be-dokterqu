@@ -103,10 +103,17 @@ class CustomerAddressController extends Controller
                     'label' => $address->label,
                     'recipient' => $address->recipient,
                     'phone' => $address->phone,
+                    'province_id' => $address->province_id,
                     'province' => $address->province_name,
+                    'city_id' => $address->city_id,
                     'city' => $address->city_name,
                     'latitude' => $address->latitude,
                     'longitude' => $address->longitude,
+                    'links' => [
+                        'self' => '/user/customer/address/' . $address->id,
+                        'edit' => '/user/customer/address/' . $address->id . '/update',
+                        'delete' => '/user/customer/address/' . $address->id . '/delete',
+                    ],
                 ]);
             }
 
@@ -163,6 +170,51 @@ class CustomerAddressController extends Controller
         }
     }
 
+    public function getAddressById($id)
+    {
+        try {
+            $address = CustomerAddress::where('id', $id)->first();
+
+            if (!$address) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No data found',
+                    'data' => null,
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Get Customer Address Success',
+                'data' => [
+                    'id' => $address->id,
+                    'is_default' => $address->default,
+                    'label' => $address->label,
+                    'address' => $address->address,
+                    'label' => $address->label,
+                    'recipient' => $address->recipient,
+                    'phone' => $address->phone,
+                    'province_id' => $address->province_id,
+                    'province' => $address->province_name,
+                    'city_id' => $address->city_id,
+                    'city' => $address->city_name,
+                    'latitude' => $address->latitude,
+                    'longitude' => $address->longitude,
+                    'links' => [
+                        'edit' => '/user/customer/address/' . $address->id . '/update',
+                        'delete' => '/user/customer/address/' . $address->id . '/delete',
+                    ],
+                ],
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage() . ' at ' . $th->getfile() . ' (Line: ' . $th->getLine() . ')',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function updateAddress(Request $request, $id)
     {
         try {
@@ -195,6 +247,11 @@ class CustomerAddressController extends Controller
                 ], Response::HTTP_NOT_FOUND);
             }
 
+            $oldDefaultAddress = CustomerAddress::where('user_id', Auth::user()->id)->where('default', 1)->first();
+            if ($request->default == 1 && isset($oldDefaultAddress)) {
+                $oldDefaultAddress->update(['default' => 0]);
+            }
+
             $customerAddress = $customerAddress->update([
                 'user_id' => Auth::user()->id,
                 'label' => ucwords($request->label),
@@ -205,6 +262,7 @@ class CustomerAddressController extends Controller
                 'longitude' => $request->longitude,
                 'province_id' => $request->province_id,
                 'city_id' => $request->city_id,
+                'default' => $request->default,
             ]);
 
             return response()->json([

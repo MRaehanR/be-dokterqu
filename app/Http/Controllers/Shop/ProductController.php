@@ -346,6 +346,7 @@ class ProductController extends Controller
                 'id' => $orderID,
                 'user_id' => Auth::user()->id,
                 'address_id' => $userAddress->id,
+                'status' => 'waiting_payment',
             ]);
 
             if (isset($request->voucher_id)) {

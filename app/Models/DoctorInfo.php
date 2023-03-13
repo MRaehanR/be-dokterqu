@@ -54,6 +54,11 @@ class DoctorInfo extends Model
         return $this->belongsTo(DoctorType::class, 'type_doctor_id');
     }
 
+    public function orderHomecares()
+    {
+        return $this->hasMany(OrderHomecare::class);
+    }
+
 
     /*
     |--------------------------------------------------------------------------
