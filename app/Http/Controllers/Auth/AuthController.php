@@ -147,9 +147,9 @@ class AuthController extends Controller
                             'alumnus' => 'required',
                             'alumnus_tahun' => 'required|integer',
                             'tempat_praktik' => 'required',
-                            'cv' => 'required|mimes:jpg,png,jpeg,bmp|max:2048',
-                            'str' => 'required|mimes:jpg,png,jpeg,bmp|max:2048',
-                            'ktp' => 'required|mimes:jpg,png,jpeg,bmp|max:2048',
+                            'cv' => 'required|mimes:jpg,png,jpeg,bmp,webp|max:2048',
+                            'str' => 'required|mimes:jpg,png,jpeg,bmp,webp|max:2048',
+                            'ktp' => 'required|mimes:jpg,png,jpeg,bmp,webp|max:2048',
                         ]
                     );
 

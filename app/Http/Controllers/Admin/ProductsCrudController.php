@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Requests\ProductRequest;
 use App\Http\Requests\ProductsRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -40,10 +41,14 @@ class ProductsCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        $this->crud->column('category_id');
         $this->crud->column('name');
+        $this->crud->column('category_id');
         $this->crud->column('desc');
-        $this->crud->column('images');
+        $this->crud->addColumn([
+            'name' => 'images',
+            'label' => 'Images',
+            'type' => 'image'
+        ]);
         $this->crud->column('additional_info');
         $this->crud->column('created_at');
         $this->crud->column('updated_at');
@@ -63,8 +68,9 @@ class ProductsCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
+        $this->crud->setValidation(ProductRequest::class);
         Widget::add()->type('script')->content('js/forms/slug.js');
-        
+
         $this->crud->field('category_id');
         $this->crud->field('name');
         $this->crud->field('slug');
