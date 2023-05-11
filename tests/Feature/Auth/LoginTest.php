@@ -15,9 +15,7 @@ class LoginTest extends TestCase
     
     public function test_login_success(): void
     {
-        $user = User::factory()->roleCustomer()->create([
-            'active' => true,
-        ]);
+        $user = User::factory()->roleCustomer()->create();
 
         $response = $this->post('api/auth/login', [
             'email' => $user['email'],
@@ -104,11 +102,9 @@ class LoginTest extends TestCase
     public function test_login_failed_with_disabled_account_and_doctor_role(): void
     {
         $user = User::factory()->roleDoctor()->create([
-            // 'active' => false,
-            // 'gender' => 'm'
+            'active' => false,
         ]);
 
-        dd($user->active);
 
         $response = $this->post('api/auth/login', [
             'email' => $user['email'],
@@ -126,7 +122,7 @@ class LoginTest extends TestCase
     public function test_login_failed_with_disabled_account_and_apotek_owner_role(): void
     {
         $user = User::factory()->roleApotekOwner()->create([
-            // 'active' => false,
+            'active' => false,
         ]);
 
         $response = $this->post('api/auth/login', [
