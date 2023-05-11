@@ -103,7 +103,7 @@ class UserFactory extends Factory
                 'latitude' => $this->faker->latitude(-7, -6.9),
                 'longitude' => $this->faker->longitude(110.4, 110.6),
                 'price_homecare' => $this->faker->numberBetween(10000, 100000),
-                'is_available' => rand(0, 1),
+                // 'is_available' => rand(0, 1),
                 'slug' => Str::slug($user->name),
                 'cv' => 'assets/images/default/default_photo_profile.png',
                 'str' => 'assets/images/default/default_photo_profile.png',
