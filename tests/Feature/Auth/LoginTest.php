@@ -15,7 +15,9 @@ class LoginTest extends TestCase
     
     public function test_login_success(): void
     {
-        $user = User::factory()->roleCustomer()->create();
+        $user = User::factory()->roleCustomer()->create([
+            'active' => true,
+        ]);
 
         $response = $this->post('api/auth/login', [
             'email' => $user['email'],
@@ -51,7 +53,7 @@ class LoginTest extends TestCase
         $response->assertJsonStructure(['status', 'message',]);
         $response->assertJson([
             'status' => false,
-            'message' => 'Your account has not been registered.'
+            'message' => 'Account not found.'
         ]);
     }
 
@@ -101,10 +103,17 @@ class LoginTest extends TestCase
 
     public function test_login_failed_with_disabled_account_and_doctor_role(): void
     {
-        $user = User::factory()->roleDoctor()->create([
+        $user = User::create([
+            'name' => 'Example',
+            'email' => 'test@example.com',
+            'email_verified_at' => now(),
+            'password' => 'op[kl;m,.',
+            'phone' => '0882383274',
+            'gender' => 'm',
             'active' => false,
         ]);
 
+        $user->assignRole('doctor');
 
         $response = $this->post('api/auth/login', [
             'email' => $user['email'],
@@ -121,9 +130,17 @@ class LoginTest extends TestCase
 
     public function test_login_failed_with_disabled_account_and_apotek_owner_role(): void
     {
-        $user = User::factory()->roleApotekOwner()->create([
+        $user = User::create([
+            'name' => 'Example',
+            'email' => 'test@example.com',
+            'email_verified_at' => now(),
+            'password' => 'op[kl;m,.',
+            'phone' => '0882383274',
+            'gender' => 'm',
             'active' => false,
         ]);
+
+        $user->assignRole('apotek_owner');
 
         $response = $this->post('api/auth/login', [
             'email' => $user['email'],

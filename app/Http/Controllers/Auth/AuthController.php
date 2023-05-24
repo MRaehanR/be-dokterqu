@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterDoctorRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\ApotekInfo;
 use App\Models\DoctorInfo;
 use App\Models\User;
@@ -10,6 +13,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -19,29 +23,15 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
         try {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'email' => 'required|email',
-                    'password' => 'required',
-                ]
-            );
+            $user = User::where('email', $request->email)->first();
 
-            if ($validator->fails()) {
+            if (!$user) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Validation error',
-                    'errors' => $validator->errors()
-                ], Response::HTTP_UNPROCESSABLE_ENTITY);
-            }
-
-            if(!User::where('email', $request->email)->first()){
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Your account has not been registered.',
+                    'message' => 'Account not found.',
                 ], Response::HTTP_NOT_FOUND);
             }
 
@@ -52,14 +42,14 @@ class AuthController extends Controller
                 ], Response::HTTP_UNAUTHORIZED);
             }
 
-            $user = User::where('email', $request->email)->first();
             if (!$user->active) {
                 return response()->json([
                     'status' => false,
                     'message' => ($user->roles->first()->name == 'doctor' || $user->roles->first()->name == 'apotek_owner') ? 'Your data has not been verified' : 'Your Account is Disabled',
                 ], Response::HTTP_UNAUTHORIZED);
             }
-            $token = $user->createToken("API ACCESS TOKEN")->plainTextToken;
+
+            $token = $user->createToken(config('app.key'))->plainTextToken;
 
             return response()->json([
                 'status' => true,
@@ -103,31 +93,11 @@ class AuthController extends Controller
         }
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
+        DB::beginTransaction();
         try {
-            $validator = Validator::make(
-                $request->all(),
-                [
-                    'name' => 'required|string|min:5',
-                    'email' => 'required|email|unique:users',
-                    'password' => 'required|min:8|confirmed',
-                    'photo' => 'mimes:jpg,png,jpeg,bmp|max:2048',
-                    'phone' => 'required|unique:users|max:15',
-                    'gender' => 'required|in:m,f',
-                    'role' => 'required',
-                ]
-            );
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Validation error',
-                    'errors' => $validator->errors()
-                ], Response::HTTP_UNPROCESSABLE_ENTITY);
-            }
-
-            $user = new User([
+            $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => $request->password,
@@ -137,31 +107,8 @@ class AuthController extends Controller
             ]);
 
             switch ($request->role) {
-                // Doctor
+                    // Doctor
                 case 1:
-                    $validator = Validator::make(
-                        $request->all(),
-                        [
-                            'type_doctor_id' => 'required',
-                            'experience' => 'required',
-                            'alumnus' => 'required',
-                            'alumnus_tahun' => 'required|integer',
-                            'tempat_praktik' => 'required',
-                            'cv' => 'required|mimes:jpg,png,jpeg,bmp,webp|max:2048',
-                            'str' => 'required|mimes:jpg,png,jpeg,bmp,webp|max:2048',
-                            'ktp' => 'required|mimes:jpg,png,jpeg,bmp,webp|max:2048',
-                        ]
-                    );
-
-                    if ($validator->fails()) {
-                        return response()->json([
-                            'status' => false,
-                            'message' => 'Validation error',
-                            'errors' => $validator->errors()
-                        ], Response::HTTP_UNPROCESSABLE_ENTITY);
-                    }
-
-                    $user->save();
                     $doctorInfo = DoctorInfo::create([
                         'user_id' => $user->id,
                         'slug' => Str::slug($user->name),
@@ -176,6 +123,8 @@ class AuthController extends Controller
                     ]);
                     $user->assignRole('doctor');
 
+                    DB::commit();
+
                     return response()->json([
                         'status' => true,
                         'message' => 'User created with role doctor',
@@ -186,34 +135,8 @@ class AuthController extends Controller
                     ], Response::HTTP_CREATED);
                     break;
 
-                // Apotek Owner 
+                    // Apotek Owner 
                 case 2:
-                    $validator = Validator::make(
-                        $request->all(),
-                        [
-                            'province_id' => 'required',
-                            'city_id' => 'required',
-                            'name' => 'required|string|min:5',
-                            'address' => 'required|string|min:5',
-                            'ktp' => 'required|mimes:jpg,png,jpeg,bmp|max:2048',
-                            'npwp' => 'required|mimes:jpg,png,jpeg,bmp|max:2048',
-                            'surat_izin_usaha' => 'required|mimes:jpg,png,jpeg,bmp|max:2048',
-                            'image.*' => 'required|mimes:jpg,png,jpeg,bmp,webp|max:5000',
-                            'image' => 'max:5',
-                            'latitude' => 'required',
-                            'longitude' => 'required',
-                        ]
-                    );
-
-                    if ($validator->fails()) {
-                        return response()->json([
-                            'status' => false,
-                            'message' => 'Validation error',
-                            'errors' => $validator->errors()
-                        ], Response::HTTP_UNPROCESSABLE_ENTITY);
-                    }
-
-                    $user->save();
                     $apotekInfo = ApotekInfo::create([
                         'user_id' => $user->id,
                         'province_id' => $request->province_id,
@@ -229,6 +152,8 @@ class AuthController extends Controller
                     ]);
                     $user->assignRole('apotek_owner');
 
+                    DB::commit();
+
                     return response()->json([
                         'status' => true,
                         'message' => 'User created with role apotek owner',
@@ -239,11 +164,13 @@ class AuthController extends Controller
                     ], Response::HTTP_CREATED);
                     break;
 
-                // Customer
+                    // Customer
                 case 3:
                     $user->active = 1;
                     $user->save();
                     $user->assignRole('customer');
+
+                    DB::commit();
 
                     event(new Registered($user));
 
@@ -255,6 +182,7 @@ class AuthController extends Controller
                     break;
             }
         } catch (\Throwable $th) {
+            DB::rollBack();
             Log::error($th->getMessage());
             return response()->json([
                 'status' => false,
