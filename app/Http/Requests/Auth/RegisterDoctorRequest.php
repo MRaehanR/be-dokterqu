@@ -2,13 +2,12 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Http\Requests\Request;
 use App\Http\Traits\ValidationErrorMessageTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterDoctorRequest extends FormRequest
+class RegisterDoctorRequest extends Request
 {
-    use ValidationErrorMessageTrait;
-
     /**
      * Determine if the user is authorized to make this request.
      *

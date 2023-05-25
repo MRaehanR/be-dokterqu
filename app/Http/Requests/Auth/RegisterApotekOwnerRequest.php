@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Http\Requests\Request;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterApotekOwnerRequest extends FormRequest
+class RegisterApotekOwnerRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.

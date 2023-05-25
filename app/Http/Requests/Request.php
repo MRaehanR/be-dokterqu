@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
+
+class Request extends FormRequest
+{
+    /**
+     * Validation Error Message
+     * @return void
+     * @throws HttpResponseException
+     */
+    public function failedValidation(Validator $validator)
+    {
+        throw (new HttpResponseException(
+            response()->json([
+                'status' => false,
+                'message' => 'The given data was invalid.',
+                'errors' => (new ValidationException($validator))->errors(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY)
+        ));
+    }
+}

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Http\Requests\Request;
 use App\Http\Traits\ValidationErrorMessageTrait;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -9,10 +10,8 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 
-class LoginRequest extends FormRequest
-{
-    use ValidationErrorMessageTrait;
-    
+class LoginRequest extends Request
+{   
     /**
      * Determine if the user is authorized to make this request.
      *

@@ -2,13 +2,12 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Http\Requests\Request;
 use App\Http\Traits\ValidationErrorMessageTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterRequest extends FormRequest
+class RegisterRequest extends Request
 {
-    use ValidationErrorMessageTrait;
-
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -38,12 +37,9 @@ class RegisterRequest extends FormRequest
 
         if ($this->role == 1) {
             $rules = array_merge($rules, (new RegisterDoctorRequest())->rules());
-            // dd($rules);
         } else if ($this->role == 2) {
             $rules = array_merge($rules, (new RegisterApotekOwnerRequest())->rules());
         }
-
-        // dd(array($rules));
 
         return $rules;
     }
