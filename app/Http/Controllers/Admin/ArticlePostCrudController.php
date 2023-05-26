@@ -31,7 +31,7 @@ class ArticlePostCrudController extends CrudController
         $this->crud->setRoute(config('backpack.base.route_prefix') . '/article-post');
         $this->crud->setEntityNameStrings('article post', 'article posts');
         $this->crud->setCreateView('admin.article_post.create');
-        $this->crud->denyAccess('show');
+        $this->crud->denyAccess(['show']);
     }
 
     /**
