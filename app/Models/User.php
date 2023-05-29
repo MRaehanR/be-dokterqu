@@ -18,6 +18,10 @@ class User extends Authenticatable implements MustVerifyEmail
     use CrudTrait;
     use HasRoles, HasApiTokens, HasFactory, Notifiable;
 
+    public const TYPE_DOCTOR = 'doctor';
+    public const TYPE_APOTEK_OWNER = 'apotek_owner';
+    public const TYPE_CUSTOMER = 'customer';
+
     /**
      * The attributes that are mass assignable.
      *

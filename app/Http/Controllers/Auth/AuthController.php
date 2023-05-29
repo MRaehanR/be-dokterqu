@@ -27,7 +27,6 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $user = User::where('email', $request->input('email'))->first();
-        $role = $user->roles->first()->name;
 
         if (!$user) {
             return response()->error('Account not found.', Response::HTTP_NOT_FOUND);
@@ -38,20 +37,20 @@ class AuthController extends Controller
         }
 
         if (!$user->active) {
-            return response()->error((in_array($role, [config('const.user_type.doctor'), config('const.user_type.apotek_owner')])) ? 'Your data has not been verified' : 'Your Account is Disabled', Response::HTTP_UNAUTHORIZED);
+            $role = $user->roles->first()->name;
+            return response()->error((in_array($role, [User::TYPE_DOCTOR, User::TYPE_APOTEK_OWNER])) ? 'Your data has not been verified' : 'Your Account is Disabled', Response::HTTP_UNAUTHORIZED);
         }
 
         $token = $user->createToken('access_token')->plainTextToken;
 
-        return response()
-            ->success(
-                'User Logged In Successfully',
-                Response::HTTP_CREATED,
-                [
-                    'user' => (new UserResource($user)),
-                    'access_token' => $token,
-                ]
-            );
+        return response()->success(
+            'User Logged In Successfully',
+            Response::HTTP_CREATED,
+            [
+                'user' => new UserResource($user),
+                'access_token' => $token,
+            ]
+        );
     }
 
     public function logout(Request $request)

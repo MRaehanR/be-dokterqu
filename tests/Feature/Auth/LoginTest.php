@@ -29,15 +29,17 @@ class LoginTest extends TestCase
             'status',
             'message',
             'data' => [
-                'name',
-                'email',
-                'email_verified',
-                'photo',
-                'phone',
-                'active',
-                'gender',
-                'role',
-                'token',
+                'user' => [
+                    'name',
+                    'email',
+                    'email_verified',
+                    'photo',
+                    'phone',
+                    'active',
+                    'gender',
+                    'role',
+                ],
+                'access_token',
             ],
         ]);
     }
