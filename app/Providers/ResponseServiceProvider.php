@@ -43,7 +43,16 @@ class ResponseServiceProvider extends ServiceProvider
             ], HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
         });
 
-        Response::macro('success', function (string $message, int $code, $data) {
+        Response::macro('error_unauthenticated', function () {
+            return response()->json([
+                'status' => false,
+                'code' => HttpResponse::HTTP_UNAUTHORIZED,
+                'message' => 'Unauthenticated',
+                'data' => [],
+            ], HttpResponse::HTTP_UNAUTHORIZED);
+        });
+
+        Response::macro('success', function (string $message, int $code, $data = []) {
             return Response::json([
                 'status' => true,
                 'code' => $code,
