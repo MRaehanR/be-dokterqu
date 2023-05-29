@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -46,5 +47,16 @@ class Handler extends ExceptionHandler
                 ], 401);
             }
         });
+
+        $this->renderable(function (Throwable $e) {
+            if (config('app.env') == 'production') {
+                return response()->error_server();
+            }
+        });
+    }
+
+    public function report(Throwable $e)
+    {
+        Log::error('[' . $e->getCode() . '] "' . $e->getMessage() . '" on line ' . $e->getTrace()[0]['line'] . ' of file ' . $e->getTrace()[0]['file']);
     }
 }
