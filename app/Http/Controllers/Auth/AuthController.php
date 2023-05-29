@@ -29,48 +29,35 @@ class AuthController extends Controller
             $user = User::where('email', $request->email)->first();
 
             if (!$user) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Account not found.',
-                ], Response::HTTP_NOT_FOUND);
+                return response()->error('Account not found.', Response::HTTP_NOT_FOUND);
             }
 
             if (!Auth::attempt($request->only(['email', 'password']))) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Email or Password does not match.',
-                ], Response::HTTP_UNAUTHORIZED);
+                return response()->error('Email or Password does not match.', Response::HTTP_UNAUTHORIZED);
             }
 
             if (!$user->active) {
-                return response()->json([
-                    'status' => false,
-                    'message' => ($user->roles->first()->name == 'doctor' || $user->roles->first()->name == 'apotek_owner') ? 'Your data has not been verified' : 'Your Account is Disabled',
-                ], Response::HTTP_UNAUTHORIZED);
+                return response()->error(($user->roles->first()->name == 'doctor' || $user->roles->first()->name == 'apotek_owner') ? 'Your data has not been verified' : 'Your Account is Disabled', Response::HTTP_UNAUTHORIZED);
             }
 
-            $token = $user->createToken(config('app.key'))->plainTextToken;
+            $token = $user->createToken('api-access-token')->plainTextToken;
 
-            return response()->json([
-                'status' => true,
-                'message' => 'User Logged In Successfully',
-                'data' => [
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'email_verified' => $user->email_verified,
-                    'photo' => $user->photo,
-                    'phone' => $user->phone,
-                    'active' => $user->active,
-                    'gender' => $user->gender,
-                    'role' => $user->roles->first()->name,
-                    'token' => $token,
-                ],
-            ], Response::HTTP_CREATED);
+            return response()->success('User Logged In Successfully', Response::HTTP_CREATED, [
+                'name' => $user->name,
+                'email' => $user->email,
+                'email_verified' => $user->email_verified,
+                'photo' => $user->photo,
+                'phone' => $user->phone,
+                'active' => $user->active,
+                'gender' => $user->gender,
+                'role' => $user->roles->first()->name,
+                'token' => $token,
+            ]);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return response()->json([
                 'status' => false,
-                'message' => $th->getMessage()
+                'message' => $th->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
