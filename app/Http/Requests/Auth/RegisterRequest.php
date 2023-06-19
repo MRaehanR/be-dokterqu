@@ -4,6 +4,7 @@ namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\Request;
 use App\Http\Traits\ValidationErrorMessageTrait;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterRequest extends Request
@@ -35,9 +36,9 @@ class RegisterRequest extends Request
             'role' => 'required',
         ];
 
-        if ($this->role == 1) {
+        if ($this->role == User::TYPE_DOCTOR) {
             $rules = array_merge($rules, (new RegisterDoctorRequest())->rules());
-        } else if ($this->role == 2) {
+        } else if ($this->role == User::TYPE_APOTEK_OWNER) {
             $rules = array_merge($rules, (new RegisterApotekOwnerRequest())->rules());
         }
 

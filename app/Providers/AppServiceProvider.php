@@ -2,10 +2,20 @@
 
 namespace App\Providers;
 
+use App\Services\User\UserService;
+use App\Services\User\UserServiceImplement;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class AppServiceProvider extends ServiceProvider
+class AppServiceProvider extends ServiceProvider implements DeferrableProvider
 {
+    public function provides(): array
+    {
+        return [
+            UserService::class,
+        ];
+    }
+
     /**
      * Register any application services.
      *
@@ -13,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->services();
     }
 
     /**
@@ -27,5 +37,10 @@ class AppServiceProvider extends ServiceProvider
             \Backpack\PermissionManager\app\Http\Controllers\UserCrudController::class, //this is package controller
             \App\Http\Controllers\Admin\UserCrudController::class //this should be your own controller
         );
+    }
+
+    private function services()
+    {
+        $this->app->singleton(UserService::class, UserServiceImplement::class);
     }
 }
