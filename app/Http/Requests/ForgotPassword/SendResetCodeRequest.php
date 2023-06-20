@@ -24,7 +24,7 @@ class SendResetCodeRequest extends Request
     public function rules()
     {
         return [
-            'email' => 'required|email|exists:users',
+            'email' => 'required|email',
         ];
     }
 }

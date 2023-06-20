@@ -4,8 +4,6 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
@@ -14,7 +12,7 @@ class EmailVerificationTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function test_send_email_verification()
+    public function test_send_email_verification_success()
     {
         $user = User::factory()->roleCustomer()->unverified()->create();
 
@@ -47,7 +45,7 @@ class EmailVerificationTest extends TestCase
         $response->assertStatus(Response::HTTP_ALREADY_REPORTED);
     }
 
-    public function test_verify_email()
+    public function test_verify_email_success()
     {
         $user = User::factory()->roleCustomer()->unverified()->create();
 

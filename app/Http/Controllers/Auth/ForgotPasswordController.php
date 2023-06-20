@@ -16,8 +16,8 @@ class ForgotPasswordController extends Controller
 {
     public function sendResetCode(SendResetCodeRequest $request)
     {
-        if (!User::where('email', $request->input('email')))
-            return response()->success('Email not found', Response::HTTP_NOT_FOUND);
+        if (!User::firstWhere('email', $request->input('email')))
+            return response()->error('Email not found', Response::HTTP_NOT_FOUND);
 
         $oldResetCode = ResetCodePassword::where('email', $request->email)->first();
 
@@ -44,7 +44,7 @@ class ForgotPasswordController extends Controller
 
         if ($resetCode->created_at > now()->addHour()) {
             $resetCode->delete();
-            return response()->error("Reset Code is Expired", Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->error("Reset Code is Expired", Response::HTTP_FORBIDDEN);
         }
 
         return response()->success("Reset Code is Valid", Response::HTTP_ACCEPTED);
@@ -56,7 +56,7 @@ class ForgotPasswordController extends Controller
 
         if ($resetCode->created_at > now()->addHour()) {
             $resetCode->delete();
-            return response()->error("Reset Code is Expired", Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->error("Reset Code is Expired", Response::HTTP_FORBIDDEN);
         }
 
         User::firstWhere('email', $resetCode->email)->update([

@@ -55,7 +55,7 @@ class LoginTest extends TestCase
         $response->assertJsonStructure(['status', 'message',]);
         $response->assertJson([
             'status' => false,
-            'message' => 'Account not found.'
+            'message' => 'Account not found'
         ]);
     }
 
@@ -80,7 +80,7 @@ class LoginTest extends TestCase
         $response->assertJsonStructure(['status', 'message',]);
         $response->assertJson([
             'status' => false,
-            'message' => 'Email or Password does not match.',
+            'message' => 'Email or Password does not match',
         ]);
     }
 
