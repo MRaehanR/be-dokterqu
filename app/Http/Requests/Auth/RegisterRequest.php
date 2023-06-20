@@ -4,6 +4,7 @@ namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\Request;
 use App\Models\User;
+use Illuminate\Validation\Rule;
 
 class RegisterRequest extends Request
 {
@@ -31,7 +32,7 @@ class RegisterRequest extends Request
             'photo' => 'mimes:jpg,png,jpeg,bmp|max:2048',
             'phone' => 'required|unique:users|max:15',
             'gender' => 'required|in:m,f',
-            'role' => 'required',
+            'role' => ["required", Rule::in([User::TYPE_DOCTOR, USER::TYPE_APOTEK_OWNER, USER::TYPE_CUSTOMER])],
         ];
 
         if ($this->role == User::TYPE_DOCTOR) {
