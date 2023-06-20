@@ -26,11 +26,11 @@ class AuthController extends Controller
         $user = User::where('email', $request->input('email'))->first();
 
         if (!$user) {
-            return response()->error('Account not found.', Response::HTTP_NOT_FOUND);
+            return response()->error('Account not found', Response::HTTP_NOT_FOUND);
         }
 
         if (!Auth::attempt($request->only(['email', 'password']))) {
-            return response()->error('Email or Password does not match.', Response::HTTP_UNAUTHORIZED);
+            return response()->error('Email or Password does not match', Response::HTTP_UNAUTHORIZED);
         }
 
         if (!$user->active) {

@@ -3,8 +3,6 @@
 namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\Request;
-use App\Http\Traits\ValidationErrorMessageTrait;
-use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterDoctorRequest extends Request
 {

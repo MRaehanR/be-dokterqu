@@ -42,13 +42,13 @@ Route::prefix('auth')->group(function() {
     Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
     Route::prefix('password')->group(function() {
-        Route::post('/forgot', [ForgotPasswordController::class, 'forgot']);
+        Route::post('/send-reset-code', [ForgotPasswordController::class, 'sendResetCode']);
         Route::post('/check-reset-code', [ForgotPasswordController::class, 'checkResetCode']);
-        Route::post('/reset', [ForgotPasswordController::class, 'reset'])->name('password.reset');
+        Route::post('/reset', [ForgotPasswordController::class, 'resetPassword'])->name('password.reset');
     });
 
     Route::middleware('auth:sanctum')->prefix('email')->group(function() {
-        Route::post('/verification-notification', [EmailVerificationController::class, 'sendVerificationEmail']);
+        Route::post('/send-verification', [EmailVerificationController::class, 'sendVerificationEmail']);
         Route::get('/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
     });
 });

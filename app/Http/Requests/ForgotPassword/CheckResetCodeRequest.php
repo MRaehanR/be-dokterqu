@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\ForgotPassword;
 
-use App\Http\Requests\Request;
+use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends Request
-{   
+class CheckResetCodeRequest extends FormRequest
+{
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -24,8 +24,8 @@ class LoginRequest extends Request
     public function rules()
     {
         return [
-            'email' => 'required|email',
-            'password' => 'required',
+            'email' => 'required|email|exists:users',
+            'code' => 'required|exists:reset_code_passwords',
         ];
     }
 }

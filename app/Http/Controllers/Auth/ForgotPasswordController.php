@@ -3,142 +3,68 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ForgotPassword\CheckResetCodeRequest;
+use App\Http\Requests\ForgotPassword\ResetPasswordRequest;
+use App\Http\Requests\ForgotPassword\SendResetCodeRequest;
 use App\Mail\SendCodeResetPassword;
 use App\Models\ResetCodePassword;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
 class ForgotPasswordController extends Controller
 {
-    public function forgot(Request $request)
+    public function sendResetCode(SendResetCodeRequest $request)
     {
-        try {
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|email|exists:users',
-            ]);
+        if (!User::where('email', $request->input('email')))
+            return response()->success('Email not found', Response::HTTP_NOT_FOUND);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    "status" => false,
-                    "message" => "Validation Error",
-                    "errors" => $validator->errors(),
-                ], Response::HTTP_UNPROCESSABLE_ENTITY);
-            }
+        $oldResetCode = ResetCodePassword::where('email', $request->email)->first();
 
-            if (!User::where('email', $request->input('email'))) {
-                return response()->json([
-                    "status" => false,
-                    "message" => "Email not found.",
-                ], Response::HTTP_NOT_FOUND);
-            }
+        if ($oldResetCode) $oldResetCode->delete();
 
-            $oldResetCode = ResetCodePassword::where('email', $request->email)->first();
-            if ($oldResetCode) $oldResetCode->delete();
+        $resetCode = mt_rand(0, 999999);
 
-            $resetCode = mt_rand(0, 999999);
-            ResetCodePassword::create([
-                'email' => $request->email,
-                'code' => $resetCode,
-            ]);
+        ResetCodePassword::create([
+            'email' => $request->email,
+            'code' => $resetCode,
+        ]);
 
-            Mail::to($request->email)->send(new SendCodeResetPassword($resetCode));
+        Mail::to($request->email)->send(new SendCodeResetPassword($resetCode));
 
-            return response()->json([
-                "status" => true,
-                "message" => "Reset password code sent on your email.",
-            ], Response::HTTP_OK);
-        } catch (\Throwable $th) {
-            Log::error($th->getMessage());
-            return response()->json([
-                'status' => false,
-                'message' => $th->getMessage()
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return response()->success('Reset password code sent on your email', Response::HTTP_OK);
     }
 
-    public function checkResetCode(Request $request){
-        try {
-            $validator = Validator::make($request->all(), [
-                'code' => 'required|exists:reset_code_passwords',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    "status" => false,
-                    "message" => "Validation Error",
-                    "errors" => $validator->errors(),
-                ], Response::HTTP_UNPROCESSABLE_ENTITY);
-            }
-
-            $resetCode = ResetCodePassword::firstWhere('code', $request->code);
-            if ($resetCode->created_at > now()->addHour()) {
-                $resetCode->delete();
-                return response()->json([
-                    "status" => false,
-                    "message" => "Code is Expired",
-                ], Response::HTTP_UNPROCESSABLE_ENTITY);
-            }
-
-            return response()->json([
-                "status" => true,
-                "message" => "Code is Valid",
-                "data" => $resetCode,
-            ], Response::HTTP_ACCEPTED);
-        } catch (\Throwable $th) {
-            Log::error($th->getMessage());
-            return response()->json([
-                'status' => false,
-                'message' => $th->getMessage()
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public function reset(Request $request)
+    public function checkResetCode(CheckResetCodeRequest $request)
     {
-        try {
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
-                'code' => 'required|exists:reset_code_passwords',
-                'password' => 'required|string|confirmed'
-            ]);
+        $resetCode = ResetCodePassword::firstWhere('code', $request->input('code'));
 
-            if ($validator->fails()) {
-                return response()->json([
-                    "status" => false,
-                    "message" => "Validation Error",
-                    "errors" => $validator->errors(),
-                ], Response::HTTP_UNPROCESSABLE_ENTITY);
-            }
+        if ($request->input('email') !== $resetCode->email)
+            return response()->error("Email not Match", Response::HTTP_FORBIDDEN);
 
-            $resetCode = ResetCodePassword::firstWhere('code', $request->code);
-            if ($resetCode->created_at > now()->addHour()) {
-                $resetCode->delete();
-                return response()->json([
-                    "status" => false,
-                    "message" => "Code is Expired",
-                ], Response::HTTP_UNPROCESSABLE_ENTITY);
-            }
-
-            $user = User::firstWhere('email', $resetCode->email);
-            $user->password = $request->input('password');
-            $user->save();
+        if ($resetCode->created_at > now()->addHour()) {
             $resetCode->delete();
-
-            return response()->json([
-                "status" => true,
-                "message" => "Password has been successfully changed",
-            ], Response::HTTP_OK);
-        } catch (\Throwable $th) {
-            Log::error($th->getMessage());
-            return response()->json([
-                'status' => false,
-                'message' => $th->getMessage()
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->error("Reset Code is Expired", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+
+        return response()->success("Reset Code is Valid", Response::HTTP_ACCEPTED);
+    }
+
+    public function resetPassword(ResetPasswordRequest $request)
+    {
+        $resetCode = ResetCodePassword::firstWhere('code', $request->input('code'));
+
+        if ($resetCode->created_at > now()->addHour()) {
+            $resetCode->delete();
+            return response()->error("Reset Code is Expired", Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        User::firstWhere('email', $resetCode->email)->update([
+            'password' => $request->input('password'),
+        ]);
+
+        $resetCode->delete();
+
+        return response()->success("Password has been successfully changed", Response::HTTP_OK);
     }
 }

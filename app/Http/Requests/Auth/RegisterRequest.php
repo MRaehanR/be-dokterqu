@@ -3,9 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\Request;
-use App\Http\Traits\ValidationErrorMessageTrait;
 use App\Models\User;
-use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterRequest extends Request
 {

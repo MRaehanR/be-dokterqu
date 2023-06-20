@@ -20,7 +20,9 @@ class Request extends FormRequest
         throw (new HttpResponseException(
             response()->json([
                 'status' => false,
+                'code' => Response::HTTP_UNPROCESSABLE_ENTITY,
                 'message' => 'The given data was invalid.',
+                'data' => [],
                 'errors' => (new ValidationException($validator))->errors(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY)
         ));
