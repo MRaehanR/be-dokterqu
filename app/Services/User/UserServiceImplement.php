@@ -9,7 +9,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-use function App\Helpers\storeImageToPublic;
+use function App\Helpers\storeTo;
 
 class UserServiceImplement implements UserService
 {
@@ -58,12 +58,12 @@ class UserServiceImplement implements UserService
             'alumnus' => $data['alumnus'],
             'alumnus_tahun' => $data['alumnus_tahun'],
             'tempat_praktik' => $data['tempat_praktik'],
-            'cv' => storeImageToPublic($data['cv'], 'cv'),
-            'str' => storeImageToPublic($data['str'], 'str'),
-            'ktp' => storeImageToPublic($data['ktp'], 'ktp'),
+            'cv' => storeTo('private', 'cv', $data['cv'], $user->id),
+            'str' => storeTo('private', 'str', $data['str'], $user->id),
+            'ktp' => storeTo('private', 'ktp', $data['ktp'], $user->id),
         ]);
 
-        $user->assignRole('doctor');
+        $user->assignRole(User::TYPE_DOCTOR);
 
         return $doctorInfo;
     }
@@ -76,24 +76,26 @@ class UserServiceImplement implements UserService
             'city_id' => $data['city_id'],
             'name' => $data['name'],
             'address' => $data['address'],
-            'ktp' => storeImageToPublic($data['ktp'], 'ktp'),
-            'npwp' => storeImageToPublic($data['npwp'], 'npwp'),
-            'surat_izin_usaha' => storeImageToPublic($data['surat_izin_usaha'], 'surat_izin_usaha'),
+            'ktp' => storeTo('private', 'ktp', $data['ktp'], $user->id),
+            'npwp' => storeTo('private', 'npwp', $data['npwp'], $user->id),
+            'surat_izin_usaha' => storeTo('private', 'surat_izin_usaha', $data['surat_izin_usaha'], $user->id),
             'image' => $data['file']('image'),
             'latitude' => $data['latitude'],
             'longitude' => $data['longitude'],
         ]);
 
-        $user->assignRole('apotek_owner');
+        $user->assignRole(User::TYPE_APOTEK_OWNER);
 
         return $apotekInfo;
     }
 
     private function createCustomer(User $user)
     {
-        $user->active = 1;
-        $user->save();
-        $user->assignRole('customer');
+        $user->update([
+            'active' => true,
+        ]);
+        
+        $user->assignRole(User::TYPE_CUSTOMER);
 
         event(new Registered($user));
 

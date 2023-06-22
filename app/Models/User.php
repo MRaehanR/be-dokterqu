@@ -13,6 +13,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 
+use function App\Helpers\storeTo;
+
 class User extends Authenticatable implements MustVerifyEmail
 {
     use CrudTrait;
@@ -164,17 +166,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function setPhotoAttribute($value)
     {
-        if ($value) {
-            $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($value) . "." . $value->getClientOriginalExtension();
-            $filePath = "storage/images/photo_profile/" . $fileName;
-            $value->storeAs(
-                "public/images/photo_profile",
-                $fileName
-            );
-            $this->attributes['photo'] = $filePath;
-        } else {
-            $this->attributes['photo'] = null;
-        }
+        $this->attributes['photo'] = storeTo('public', 'photo_profile', $value);
     }
 
 

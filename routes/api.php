@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\Homecare\HomecareController;
 use App\Http\Controllers\MidtransController;
@@ -36,44 +37,44 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::prefix('auth')->group(function() {
+Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
-    Route::prefix('password')->group(function() {
+    Route::prefix('password')->group(function () {
         Route::post('/send-reset-code', [ForgotPasswordController::class, 'sendResetCode']);
         Route::post('/check-reset-code', [ForgotPasswordController::class, 'checkResetCode']);
         Route::post('/reset', [ForgotPasswordController::class, 'resetPassword'])->name('password.reset');
     });
 
-    Route::middleware('auth:sanctum')->prefix('email')->group(function() {
+    Route::middleware('auth:sanctum')->prefix('email')->group(function () {
         Route::post('/send-verification', [EmailVerificationController::class, 'sendVerificationEmail']);
         Route::get('/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
     });
 });
 
-Route::prefix('article')->group(function() {
-    Route::prefix('post')->group(function() {
+Route::prefix('article')->group(function () {
+    Route::prefix('post')->group(function () {
         Route::get('/', [ArticlePostController::class, 'getAllArticles']);
         Route::get('/{slug}', [ArticlePostController::class, 'getArticle']);
         Route::post('/{articleId}/like', [ArticlePostController::class, 'setArticleLike'])->middleware('auth:sanctum');
     });
 
-    Route::prefix('comment')->group(function() {
+    Route::prefix('comment')->group(function () {
         Route::get('/{articlePostId}', [ArticleCommentController::class, 'getComments']);
         Route::post('/{articlePostId}/reply', [ArticleCommentController::class, 'setComment'])->middleware(['throttle:5,0.2', 'auth:sanctum']);
     });
 
-    Route::prefix('category')->group(function() {
+    Route::prefix('category')->group(function () {
         Route::get('/', [ArticleCategoryController::class, 'getAllCategory']);
     });
 });
 
-Route::prefix('user')->group(function() {
+Route::prefix('user')->group(function () {
     Route::get('/profile', [UserController::class, 'getUserProfile'])->middleware('auth:sanctum');
     Route::post('/profile', [UserController::class, 'updateUserProfile'])->middleware('auth:sanctum');
-    Route::prefix('customer')->group(function() {
+    Route::prefix('customer')->group(function () {
         Route::post('/address', [CustomerAddressController::class, 'setAddress'])->middleware('auth:sanctum');
         Route::get('/addresses', [CustomerAddressController::class, 'getAddresses'])->middleware('auth:sanctum');
         Route::get('/default/address', [CustomerAddressController::class, 'getDefaultAddress'])->middleware('auth:sanctum');
@@ -81,7 +82,7 @@ Route::prefix('user')->group(function() {
         Route::post('/address/{id}/update', [CustomerAddressController::class, 'updateAddress'])->middleware('auth:sanctum');
         Route::delete('/address/{id}/delete', [CustomerAddressController::class, 'deleteAddress'])->middleware('auth:sanctum');
 
-        Route::prefix('history')->group(function() {
+        Route::prefix('history')->group(function () {
             Route::get('/shop', [HistoryPurchaseController::class, 'getHistoryShop'])->middleware('auth:sanctum');
             Route::get('/shop/{orderId}', [HistoryPurchaseController::class, 'getDetailHistoryShop'])->middleware('auth:sanctum');
             Route::post('/shop/{orderId}/cancel', [HistoryPurchaseController::class, 'cancelHistoryShop'])->middleware('auth:sanctum');
@@ -90,7 +91,7 @@ Route::prefix('user')->group(function() {
             Route::post('/homecare/{orderIT}/cancel', [HistoryPurchaseController::class, 'cancelHistoryHomecare'])->middleware('auth:sanctum');
         });
     });
-    Route::prefix('doctor')->group(function() {
+    Route::prefix('doctor')->group(function () {
         Route::get('/doctor-type', [DoctorController::class, 'getDoctorTypes']);
         Route::get('/{slug}', [DoctorController::class, 'getDoctorBySlug']);
     });
@@ -98,13 +99,13 @@ Route::prefix('user')->group(function() {
     Route::get('/doctors', [DoctorController::class, 'getDoctors']);
 });
 
-Route::prefix('form')->group(function() {
+Route::prefix('form')->group(function () {
     Route::get('/register', [FormController::class, 'register']);
     Route::get('/register/doctor', [FormController::class, 'registerDoctor']);
     Route::get('/register/apotek', [FormController::class, 'registerApotek']);
 });
 
-Route::prefix('shop')->group(function() {
+Route::prefix('shop')->group(function () {
     Route::get('/products', [ProductController::class, 'getAllProducts']);
     Route::get('/product/{slug}', [ProductController::class, 'getProductBySlug']);
     Route::post('/checkout/product', [ProductController::class, 'setCheckoutProduct'])->middleware('auth:sanctum');
@@ -119,15 +120,19 @@ Route::prefix('shop')->group(function() {
     Route::delete('/cart/delete', [CartItemController::class, 'deleteCartItem'])->middleware('auth:sanctum');
 });
 
-Route::prefix('midtrans')->group(function() {
+Route::prefix('midtrans')->group(function () {
     Route::post('/notification-handler', [MidtransController::class, 'notificationHandler']);
 });
 
-Route::prefix('location')->group(function() {
+Route::prefix('location')->group(function () {
     Route::get('/provinces', [TerritoryIndonesiaController::class, 'getProvinces']);
     Route::get('/cities', [TerritoryIndonesiaController::class, 'getCities']);
 });
 
-Route::prefix('homecare')->group(function() {
+Route::prefix('homecare')->group(function () {
     Route::post('/checkout', [HomecareController::class, 'setCheckout'])->middleware('auth:sanctum');
+});
+
+Route::prefix('file')->group(function () {
+    Route::get('/{path}', [FileController::class, 'getPrivateFile'])->middleware();
 });

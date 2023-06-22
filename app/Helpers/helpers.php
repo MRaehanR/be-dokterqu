@@ -3,17 +3,24 @@
 namespace App\Helpers;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
-if (!function_exists('storeImageToPublic')) {
-    function storeImageToPublic($file, String $path)
+if (!function_exists('storeTo')) {
+    function storeTo(String $disk, String $path, $file, $userId = null)
     {
         if ($file) {
-            $fileName = Carbon::now()->format('YmdHis') . "_" . md5_file($file) . "." . $file->getClientOriginalExtension();
-            $filePath = "storage/images/$path/" . $fileName;
-            $file->storeAs(
-                "public/images/$path",
-                $fileName
-            );
+            $uniqueString = ($userId) ?? Str::random(16);
+
+            $fileName = Carbon::now()->format('YmdHis') . "_" . $uniqueString . "." . $file->getClientOriginalExtension();
+
+            $filePath = ($disk === "private")
+                ? Crypt::encryptString("$path/$fileName")
+                : "storage/$path/" . $fileName;
+
+            Storage::disk($disk)->putFileAs($path, $file, $fileName);
+
             return $filePath;
         }
         return null;
